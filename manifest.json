@@ -1,12 +1,5 @@
 [
   {
-    "uuid": "2026-05-22-c13aca7d",
-    "title": "Building the Session Notes Publisher Plugin",
-    "date": "2026-05-22",
-    "description": "Designed and built a standalone Claude Code plugin that captures session summaries and publishes them to GitHub Pages at notes.thethoughtdungeon.com",
-    "url": "https://notes.thethoughtdungeon.com/2026-05-22-c13aca7d"
-  },
-  {
     "uuid": "2026-05-22-b8ddb520",
     "title": "AI Agency Business Concept — 1099 Processing MVP",
     "date": "2026-05-22",
