@@ -284,6 +284,24 @@
 <ul><li>AI agency as managed service (not SaaS product)</li><li>1099 processing as the initial service offering and validation wedge</li><li>Upload-and-deliver workflow with AI processing + human QA review</li><li>Client journey: Submit → Process → Review → Clarify → Deliver</li><li>Agent model: AI handles ~90% autonomously, human reviewer handles escalations</li><li>Three-tier pricing anchored at $299 / $699 / Custom per tax season</li><li>MVP scope with deliberate deferrals (IRS e-filing, integrations, state filing)</li></ul>
 <h2>Decisions &amp; Insights</h2>
 <ul><li><strong>Approach chosen: Managed service, not SaaS</strong> — positions as an agency replacing a firm, not competing with Track1099/Tax1099</li><li><strong>1099 processing as wedge</strong> — time-boxed, repeatable, high-stress for clients, binary output (filed or not), clear AI fit</li><li><strong>Target customer: midsized companies</strong> — have budget to outsource, no full finance team</li><li><strong>IRS e-filing deferred in MVP</strong> — do it manually first to validate demand before automating</li><li><strong>Validation signal defined</strong>: 5 paying companies complete a job, 3 say they'd return next year</li><li><strong>Tax-specific rules</strong> (TIN validation, B-Notice handling, contractor classification edge cases) flagged for domain expert review with friend</li></ul>
+<h2>Design Visuals</h2>
+<p>&lt;style&gt; .dv-wrap { background: #13131f; border-radius: 12px; padding: 20px; margin: 16px 0; font-family: system-ui, sans-serif; } .dv-wrap .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-weight: 600; } .dv-wrap .subtitle { font-size: 14px; color: #aaa; margin: 4px 0 16px; } .dv-wrap h2 { color: #fff; font-size: 18px; margin: 0 0 4px; } .dv-wrap h3 { color: #eee; font-size: 14px; margin: 6px 0 4px; } .dv-wrap p { margin: 0; } &lt;/style&gt;</p>
+<h3>Client Journey</h3>
+<p>&lt;div class="dv-wrap"&gt; &lt;h2&gt;Client Journey — AI Agency (Managed Service)&lt;/h2&gt; &lt;p class="subtitle"&gt;1099 Processing as the first service offering&lt;/p&gt;</p>
+<p>&lt;div style="display:flex;align-items:flex-start;gap:0;flex-wrap:nowrap;overflow-x:auto;"&gt;   &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;     &lt;div style="width:52px;height:52px;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;1&lt;/div&gt;     &lt;div style="width:2px;height:24px;background:#6366f1;opacity:0.3;"&gt;&lt;/div&gt;     &lt;div style="background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;       &lt;div class="label" style="color:#6366f1;"&gt;CLIENT&lt;/div&gt;       &lt;h3 style="margin:6px 0 4px;"&gt;Submit&lt;/h3&gt;       &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;Uploads contractor payment data (CSV, QuickBooks export, etc.) through a simple portal&lt;/p&gt;     &lt;/div&gt;   &lt;/div&gt;   &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;   &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;     &lt;div style="width:52px;height:52px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;2&lt;/div&gt;     &lt;div style="width:2px;height:24px;background:#8b5cf6;opacity:0.3;"&gt;&lt;/div&gt;     &lt;div style="background:#1e1e2e;border:1px solid #8b5cf6;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;       &lt;div class="label" style="color:#8b5cf6;"&gt;AI AGENT&lt;/div&gt;       &lt;h3 style="margin:6px 0 4px;"&gt;Process&lt;/h3&gt;       &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;Validates, classifies, and prepares 1099s — flags exceptions and missing TINs&lt;/p&gt;     &lt;/div&gt;   &lt;/div&gt;   &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;   &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;     &lt;div style="width:52px;height:52px;border-radius:50%;background:#a855f7;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;3&lt;/div&gt;     &lt;div style="width:2px;height:24px;background:#a855f7;opacity:0.3;"&gt;&lt;/div&gt;     &lt;div style="background:#1e1e2e;border:1px solid #a855f7;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;       &lt;div class="label" style="color:#a855f7;"&gt;HUMAN QA&lt;/div&gt;       &lt;h3 style="margin:6px 0 4px;"&gt;Review&lt;/h3&gt;       &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;Agency reviewer checks flagged items, resolves issues, approves the batch&lt;/p&gt;     &lt;/div&gt;   &lt;/div&gt;   &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;   &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;     &lt;div style="width:52px;height:52px;border-radius:50%;background:#ec4899;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;4&lt;/div&gt;     &lt;div style="width:2px;height:24px;background:#ec4899;opacity:0.3;"&gt;&lt;/div&gt;     &lt;div style="background:#1e1e2e;border:1px solid #ec4899;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;       &lt;div class="label" style="color:#ec4899;"&gt;AGENT&lt;/div&gt;       &lt;h3 style="margin:6px 0 4px;"&gt;Clarify&lt;/h3&gt;       &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;If there are gaps, agent messages the client to resolve — feels like a real team member&lt;/p&gt;     &lt;/div&gt;   &lt;/div&gt;   &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;   &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;     &lt;div style="width:52px;height:52px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;5&lt;/div&gt;     &lt;div style="width:2px;height:24px;background:#10b981;opacity:0.3;"&gt;&lt;/div&gt;     &lt;div style="background:#1e1e2e;border:1px solid #10b981;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;       &lt;div class="label" style="color:#10b981;"&gt;DELIVER&lt;/div&gt;       &lt;h3 style="margin:6px 0 4px;"&gt;Done&lt;/h3&gt;       &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;E-filed with IRS + PDFs sent to client. Job closed.&lt;/p&gt;     &lt;/div&gt;   &lt;/div&gt; &lt;/div&gt;</p>
+<p>&lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px;"&gt;   &lt;div style="background:#1e1e2e;border:1px solid #333;border-radius:8px;padding:14px;"&gt;     &lt;div class="label"&gt;Proactive Communication&lt;/div&gt;     &lt;p style="font-size:13px;color:#ccc;margin:6px 0 0;"&gt;The agent reaches out when something is missing — the client never has to chase status&lt;/p&gt;   &lt;/div&gt;   &lt;div style="background:#1e1e2e;border:1px solid #333;border-radius:8px;padding:14px;"&gt;     &lt;div class="label"&gt;Accountability&lt;/div&gt;     &lt;p style="font-size:13px;color:#ccc;margin:6px 0 0;"&gt;A human signs off before anything is filed — the agency owns the outcome&lt;/p&gt;   &lt;/div&gt;   &lt;div style="background:#1e1e2e;border:1px solid #333;border-radius:8px;padding:14px;"&gt;     &lt;div class="label"&gt;Service Pricing&lt;/div&gt;     &lt;p style="font-size:13px;color:#ccc;margin:6px 0 0;"&gt;Priced per engagement (per company per season), not per form — aligns with how clients think about outsourcing&lt;/p&gt;   &lt;/div&gt; &lt;/div&gt; &lt;/div&gt;</p>
+<h3>Agent Model</h3>
+<p>&lt;div class="dv-wrap"&gt; &lt;h2&gt;The Agent Model — AI + Human Split&lt;/h2&gt; &lt;p class="subtitle"&gt;What the AI handles autonomously vs. what escalates to human review&lt;/p&gt;</p>
+<p>&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"&gt;   &lt;div style="background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:18px;"&gt;     &lt;div class="label" style="color:#6366f1;"&gt;AI AGENT — Handles Autonomously&lt;/div&gt;     &lt;ul style="margin:12px 0 0;padding-left:18px;color:#ccc;font-size:13px;line-height:2;"&gt;       &lt;li&gt;Parse and normalize uploaded data (CSV, Excel, QB export)&lt;/li&gt;       &lt;li&gt;Identify contractor vs. employee classification&lt;/li&gt;       &lt;li&gt;Validate TIN format and threshold amounts ($600+)&lt;/li&gt;       &lt;li&gt;Map to correct 1099 form type (NEC, MISC, etc.)&lt;/li&gt;       &lt;li&gt;Detect duplicate payees&lt;/li&gt;       &lt;li&gt;Draft client-facing messages for missing info&lt;/li&gt;       &lt;li&gt;Generate form PDFs&lt;/li&gt;       &lt;li&gt;Submit e-file payload to IRS FIRE system &lt;em&gt;(post-MVP)&lt;/em&gt;&lt;/li&gt;     &lt;/ul&gt;   &lt;/div&gt;   &lt;div style="background:#1e1e2e;border:1px solid #f59e0b;border-radius:10px;padding:18px;"&gt;     &lt;div class="label" style="color:#f59e0b;"&gt;HUMAN REVIEWER — Escalated Cases&lt;/div&gt;     &lt;ul style="margin:12px 0 0;padding-left:18px;color:#ccc;font-size:13px;line-height:2;"&gt;       &lt;li&gt;TIN mismatch / IRS B-Notice situations&lt;/li&gt;       &lt;li&gt;Ambiguous contractor classification edge cases&lt;/li&gt;       &lt;li&gt;Client has unresolved clarification questions&lt;/li&gt;       &lt;li&gt;Unusually large payment amounts (fraud check)&lt;/li&gt;       &lt;li&gt;Foreign contractor / W-8 complications&lt;/li&gt;       &lt;li&gt;Final batch approval before e-filing&lt;/li&gt;       &lt;li&gt;Any amended returns (1099-X)&lt;/li&gt;     &lt;/ul&gt;   &lt;/div&gt; &lt;/div&gt;</p>
+<p>&lt;div style="margin-top:16px;background:#1e1e2e;border:1px solid #333;border-radius:10px;padding:16px;"&gt;   &lt;div class="label"&gt;EFFICIENCY HYPOTHESIS&lt;/div&gt;   &lt;p style="font-size:13px;color:#ccc;margin:8px 0 0;"&gt;One human reviewer can oversee 50–100 concurrent jobs with AI handling 90%+ of the work autonomously. This is the unit economics story — service-level pricing at software-level costs.&lt;/p&gt; &lt;/div&gt; &lt;/div&gt;</p>
+<h3>Pricing Model</h3>
+<p>&lt;div class="dv-wrap"&gt; &lt;h2&gt;Pricing Model&lt;/h2&gt; &lt;p class="subtitle"&gt;Per-engagement, season-based — positioned between DIY software and an accounting firm&lt;/p&gt;</p>
+<p>&lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;"&gt;   &lt;div style="background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:18px;text-align:center;"&gt;     &lt;div class="label" style="color:#6366f1;"&gt;STARTER&lt;/div&gt;     &lt;div style="font-size:32px;font-weight:700;color:#fff;margin:10px 0 4px;"&gt;$299&lt;/div&gt;     &lt;div style="font-size:12px;color:#aaa;margin-bottom:14px;"&gt;per tax season&lt;/div&gt;     &lt;ul style="padding-left:16px;color:#ccc;font-size:13px;line-height:2;margin:0;text-align:left;"&gt;       &lt;li&gt;Up to 25 contractors&lt;/li&gt;       &lt;li&gt;1099-NEC + 1099-MISC&lt;/li&gt;       &lt;li&gt;E-file + PDF delivery&lt;/li&gt;       &lt;li&gt;Agent comms via portal&lt;/li&gt;       &lt;li&gt;1 revision round&lt;/li&gt;     &lt;/ul&gt;     &lt;div style="margin-top:12px;font-size:11px;color:#6366f1;"&gt;~$12/contractor&lt;/div&gt;   &lt;/div&gt;   &lt;div style="background:#1e1e2e;border:2px solid #8b5cf6;border-radius:10px;padding:18px;text-align:center;position:relative;"&gt;     &lt;div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#8b5cf6;color:white;font-size:11px;font-weight:700;padding:2px 12px;border-radius:20px;"&gt;MOST COMMON&lt;/div&gt;     &lt;div class="label" style="color:#8b5cf6;"&gt;GROWTH&lt;/div&gt;     &lt;div style="font-size:32px;font-weight:700;color:#fff;margin:10px 0 4px;"&gt;$699&lt;/div&gt;     &lt;div style="font-size:12px;color:#aaa;margin-bottom:14px;"&gt;per tax season&lt;/div&gt;     &lt;ul style="padding-left:16px;color:#ccc;font-size:13px;line-height:2;margin:0;text-align:left;"&gt;       &lt;li&gt;Up to 100 contractors&lt;/li&gt;       &lt;li&gt;All 1099 form types&lt;/li&gt;       &lt;li&gt;E-file + PDF delivery&lt;/li&gt;       &lt;li&gt;TIN verification included&lt;/li&gt;       &lt;li&gt;Unlimited revisions&lt;/li&gt;       &lt;li&gt;Priority turnaround (48h)&lt;/li&gt;     &lt;/ul&gt;     &lt;div style="margin-top:12px;font-size:11px;color:#8b5cf6;"&gt;~$7/contractor&lt;/div&gt;   &lt;/div&gt;   &lt;div style="background:#1e1e2e;border:1px solid #10b981;border-radius:10px;padding:18px;text-align:center;"&gt;     &lt;div class="label" style="color:#10b981;"&gt;ENTERPRISE&lt;/div&gt;     &lt;div style="font-size:32px;font-weight:700;color:#fff;margin:10px 0 4px;"&gt;Custom&lt;/div&gt;     &lt;div style="font-size:12px;color:#aaa;margin-bottom:14px;"&gt;per tax season&lt;/div&gt;     &lt;ul style="padding-left:16px;color:#ccc;font-size:13px;line-height:2;margin:0;text-align:left;"&gt;       &lt;li&gt;100+ contractors&lt;/li&gt;       &lt;li&gt;All form types + amendments&lt;/li&gt;       &lt;li&gt;Dedicated reviewer&lt;/li&gt;       &lt;li&gt;State filing add-on&lt;/li&gt;       &lt;li&gt;SLA guarantee&lt;/li&gt;       &lt;li&gt;White-glove onboarding&lt;/li&gt;     &lt;/ul&gt;     &lt;div style="margin-top:12px;font-size:11px;color:#10b981;"&gt;Talk to sales&lt;/div&gt;   &lt;/div&gt; &lt;/div&gt;</p>
+<p>&lt;div style="margin-top:16px;background:#1e1e2e;border:1px solid #333;border-radius:10px;padding:14px;"&gt;   &lt;div class="label"&gt;COMPETITIVE CONTEXT&lt;/div&gt;   &lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px;text-align:center;"&gt;     &lt;div&gt;       &lt;div style="font-size:13px;color:#aaa;margin-bottom:4px;"&gt;DIY Software&lt;/div&gt;       &lt;div style="font-size:18px;font-weight:700;color:#ef4444;"&gt;$50–150&lt;/div&gt;       &lt;div style="font-size:11px;color:#555;margin-top:2px;"&gt;Track1099, Tax1099 — you do all the work&lt;/div&gt;     &lt;/div&gt;     &lt;div style="border-left:1px solid #333;border-right:1px solid #333;"&gt;       &lt;div style="font-size:13px;color:#6366f1;margin-bottom:4px;font-weight:600;"&gt;AI Agency (us)&lt;/div&gt;       &lt;div style="font-size:18px;font-weight:700;color:#6366f1;"&gt;$299–699&lt;/div&gt;       &lt;div style="font-size:11px;color:#555;margin-top:2px;"&gt;Done-for-you, human-backed&lt;/div&gt;     &lt;/div&gt;     &lt;div&gt;       &lt;div style="font-size:13px;color:#aaa;margin-bottom:4px;"&gt;Accounting Firm&lt;/div&gt;       &lt;div style="font-size:18px;font-weight:700;color:#ef4444;"&gt;$1,500–5,000+&lt;/div&gt;       &lt;div style="font-size:11px;color:#555;margin-top:2px;"&gt;Traditional outsourcing&lt;/div&gt;     &lt;/div&gt;   &lt;/div&gt; &lt;/div&gt; &lt;/div&gt;</p>
+<h3>MVP Scope</h3>
+<p>&lt;div class="dv-wrap"&gt; &lt;h2&gt;MVP Scope — What You Build First&lt;/h2&gt; &lt;p class="subtitle"&gt;Smallest thing that validates: will midsized companies pay for done-for-you 1099 processing?&lt;/p&gt;</p>
+<p>&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"&gt;   &lt;div&gt;     &lt;div class="label" style="color:#10b981;margin-bottom:10px;"&gt;IN SCOPE — Build this&lt;/div&gt;     &lt;div style="display:flex;flex-direction:column;gap:8px;"&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Simple upload portal&lt;/div&gt;         &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Company creates an account, submits job with CSV/Excel upload. No integrations yet.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;AI processing pipeline&lt;/div&gt;         &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Parse data, validate, classify, generate 1099 drafts. Flag exceptions.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Internal reviewer dashboard&lt;/div&gt;         &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Your team sees the AI's work, resolves flags, approves batch before filing.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Async client messaging&lt;/div&gt;         &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Agent sends email or portal message when client input is needed.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;PDF generation + delivery&lt;/div&gt;         &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Generate 1099 PDFs, deliver via portal download.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Stripe payments&lt;/div&gt;         &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Client pays at job submission. Simple flat-fee checkout.&lt;/p&gt;       &lt;/div&gt;     &lt;/div&gt;   &lt;/div&gt;   &lt;div&gt;     &lt;div class="label" style="color:#ef4444;margin-bottom:10px;"&gt;OUT OF SCOPE — Save for later&lt;/div&gt;     &lt;div style="display:flex;flex-direction:column;gap:8px;"&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;IRS e-filing integration&lt;/div&gt;         &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Manually file via IRS FIRE in v1 — validate demand before automating this.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;QuickBooks / Gusto integrations&lt;/div&gt;         &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Upload model first. Integrations are v2 after upload is proven.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;Contractor-facing portal&lt;/div&gt;         &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Email PDFs to contractors in v1. Portal for contractors is a later UX improvement.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;State filing&lt;/div&gt;         &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Federal only for MVP. State requirements vary significantly.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;Multi-service offerings&lt;/div&gt;         &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;1099 only. Bookkeeping, AP/AR, etc. come after this is proven.&lt;/p&gt;       &lt;/div&gt;       &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;         &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;Named agent persona&lt;/div&gt;         &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Communications come from the brand in v1, not a named AI persona.&lt;/p&gt;       &lt;/div&gt;     &lt;/div&gt;   &lt;/div&gt; &lt;/div&gt;</p>
+<p>&lt;div style="margin-top:16px;background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:16px;"&gt;   &lt;div class="label" style="color:#6366f1;"&gt;VALIDATION SIGNAL&lt;/div&gt;   &lt;p style="font-size:13px;color:#ccc;margin:8px 0 0;"&gt;MVP is validated when &lt;strong style="color:#fff;"&gt;5 paying companies&lt;/strong&gt; complete a full job cycle and at least 3 say they'd use it again next year. That proves willingness to pay + trust in the output.&lt;/p&gt; &lt;/div&gt; &lt;/div&gt;</p>
 <h2>Action Items</h2>
 <ul><li><input type="checkbox" disabled> Have friend (tax domain expert) review the agent model's escalation cases and tax-specific rules</li><li><input type="checkbox" disabled> Validate pricing with potential customers before committing</li><li><input type="checkbox" disabled> Research IRS FIRE system requirements for e-filing authorization</li><li><input type="checkbox" disabled> Determine legal/liability structure for an agency filing on behalf of clients</li><li><input type="checkbox" disabled> Define go-to-market strategy for acquiring first 5 customers</li><li><input type="checkbox" disabled> Move to implementation planning (writing-plans skill)</li></ul>
       </div>
@@ -294,7 +312,7 @@
 title: "AI Agency Business Concept — 1099 Processing MVP"
 uuid: 2026-05-22-b8ddb520
 date: 2026-05-22
-published_at: 2026-05-22T02:56:34.714Z
+published_at: 2026-05-22T03:06:18.550Z
 description: "Designed an AI-powered managed service agency for 1099 processing, inspired by a Y Combinator idea to replace professional services headcount with AI."
 ---
 
@@ -320,6 +338,277 @@ Chase and a friend were discussing a Y Combinator-inspired idea: build an AI age
 - **Validation signal defined**: 5 paying companies complete a job, 3 say they'd return next year
 - **Tax-specific rules** (TIN validation, B-Notice handling, contractor classification edge cases) flagged for domain expert review with friend
 
+## Design Visuals
+
+&lt;style&gt;
+.dv-wrap { background: #13131f; border-radius: 12px; padding: 20px; margin: 16px 0; font-family: system-ui, sans-serif; }
+.dv-wrap .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-weight: 600; }
+.dv-wrap .subtitle { font-size: 14px; color: #aaa; margin: 4px 0 16px; }
+.dv-wrap h2 { color: #fff; font-size: 18px; margin: 0 0 4px; }
+.dv-wrap h3 { color: #eee; font-size: 14px; margin: 6px 0 4px; }
+.dv-wrap p { margin: 0; }
+&lt;/style&gt;
+
+### Client Journey
+
+&lt;div class="dv-wrap"&gt;
+&lt;h2&gt;Client Journey — AI Agency (Managed Service)&lt;/h2&gt;
+&lt;p class="subtitle"&gt;1099 Processing as the first service offering&lt;/p&gt;
+
+&lt;div style="display:flex;align-items:flex-start;gap:0;flex-wrap:nowrap;overflow-x:auto;"&gt;
+  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;
+    &lt;div style="width:52px;height:52px;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;1&lt;/div&gt;
+    &lt;div style="width:2px;height:24px;background:#6366f1;opacity:0.3;"&gt;&lt;/div&gt;
+    &lt;div style="background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;
+      &lt;div class="label" style="color:#6366f1;"&gt;CLIENT&lt;/div&gt;
+      &lt;h3 style="margin:6px 0 4px;"&gt;Submit&lt;/h3&gt;
+      &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;Uploads contractor payment data (CSV, QuickBooks export, etc.) through a simple portal&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;
+  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;
+    &lt;div style="width:52px;height:52px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;2&lt;/div&gt;
+    &lt;div style="width:2px;height:24px;background:#8b5cf6;opacity:0.3;"&gt;&lt;/div&gt;
+    &lt;div style="background:#1e1e2e;border:1px solid #8b5cf6;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;
+      &lt;div class="label" style="color:#8b5cf6;"&gt;AI AGENT&lt;/div&gt;
+      &lt;h3 style="margin:6px 0 4px;"&gt;Process&lt;/h3&gt;
+      &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;Validates, classifies, and prepares 1099s — flags exceptions and missing TINs&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;
+  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;
+    &lt;div style="width:52px;height:52px;border-radius:50%;background:#a855f7;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;3&lt;/div&gt;
+    &lt;div style="width:2px;height:24px;background:#a855f7;opacity:0.3;"&gt;&lt;/div&gt;
+    &lt;div style="background:#1e1e2e;border:1px solid #a855f7;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;
+      &lt;div class="label" style="color:#a855f7;"&gt;HUMAN QA&lt;/div&gt;
+      &lt;h3 style="margin:6px 0 4px;"&gt;Review&lt;/h3&gt;
+      &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;Agency reviewer checks flagged items, resolves issues, approves the batch&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;
+  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;
+    &lt;div style="width:52px;height:52px;border-radius:50%;background:#ec4899;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;4&lt;/div&gt;
+    &lt;div style="width:2px;height:24px;background:#ec4899;opacity:0.3;"&gt;&lt;/div&gt;
+    &lt;div style="background:#1e1e2e;border:1px solid #ec4899;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;
+      &lt;div class="label" style="color:#ec4899;"&gt;AGENT&lt;/div&gt;
+      &lt;h3 style="margin:6px 0 4px;"&gt;Clarify&lt;/h3&gt;
+      &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;If there are gaps, agent messages the client to resolve — feels like a real team member&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style="padding-top:26px;color:#555;font-size:20px;flex-shrink:0;padding-left:4px;padding-right:4px;"&gt;→&lt;/div&gt;
+  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:130px;flex:1;"&gt;
+    &lt;div style="width:52px;height:52px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;color:white;font-size:22px;font-weight:700;"&gt;5&lt;/div&gt;
+    &lt;div style="width:2px;height:24px;background:#10b981;opacity:0.3;"&gt;&lt;/div&gt;
+    &lt;div style="background:#1e1e2e;border:1px solid #10b981;border-radius:10px;padding:14px 12px;text-align:center;width:110px;"&gt;
+      &lt;div class="label" style="color:#10b981;"&gt;DELIVER&lt;/div&gt;
+      &lt;h3 style="margin:6px 0 4px;"&gt;Done&lt;/h3&gt;
+      &lt;p style="font-size:12px;color:#aaa;margin:0;"&gt;E-filed with IRS + PDFs sent to client. Job closed.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px;"&gt;
+  &lt;div style="background:#1e1e2e;border:1px solid #333;border-radius:8px;padding:14px;"&gt;
+    &lt;div class="label"&gt;Proactive Communication&lt;/div&gt;
+    &lt;p style="font-size:13px;color:#ccc;margin:6px 0 0;"&gt;The agent reaches out when something is missing — the client never has to chase status&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div style="background:#1e1e2e;border:1px solid #333;border-radius:8px;padding:14px;"&gt;
+    &lt;div class="label"&gt;Accountability&lt;/div&gt;
+    &lt;p style="font-size:13px;color:#ccc;margin:6px 0 0;"&gt;A human signs off before anything is filed — the agency owns the outcome&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div style="background:#1e1e2e;border:1px solid #333;border-radius:8px;padding:14px;"&gt;
+    &lt;div class="label"&gt;Service Pricing&lt;/div&gt;
+    &lt;p style="font-size:13px;color:#ccc;margin:6px 0 0;"&gt;Priced per engagement (per company per season), not per form — aligns with how clients think about outsourcing&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+### Agent Model
+
+&lt;div class="dv-wrap"&gt;
+&lt;h2&gt;The Agent Model — AI + Human Split&lt;/h2&gt;
+&lt;p class="subtitle"&gt;What the AI handles autonomously vs. what escalates to human review&lt;/p&gt;
+
+&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"&gt;
+  &lt;div style="background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:18px;"&gt;
+    &lt;div class="label" style="color:#6366f1;"&gt;AI AGENT — Handles Autonomously&lt;/div&gt;
+    &lt;ul style="margin:12px 0 0;padding-left:18px;color:#ccc;font-size:13px;line-height:2;"&gt;
+      &lt;li&gt;Parse and normalize uploaded data (CSV, Excel, QB export)&lt;/li&gt;
+      &lt;li&gt;Identify contractor vs. employee classification&lt;/li&gt;
+      &lt;li&gt;Validate TIN format and threshold amounts ($600+)&lt;/li&gt;
+      &lt;li&gt;Map to correct 1099 form type (NEC, MISC, etc.)&lt;/li&gt;
+      &lt;li&gt;Detect duplicate payees&lt;/li&gt;
+      &lt;li&gt;Draft client-facing messages for missing info&lt;/li&gt;
+      &lt;li&gt;Generate form PDFs&lt;/li&gt;
+      &lt;li&gt;Submit e-file payload to IRS FIRE system &lt;em&gt;(post-MVP)&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+  &lt;div style="background:#1e1e2e;border:1px solid #f59e0b;border-radius:10px;padding:18px;"&gt;
+    &lt;div class="label" style="color:#f59e0b;"&gt;HUMAN REVIEWER — Escalated Cases&lt;/div&gt;
+    &lt;ul style="margin:12px 0 0;padding-left:18px;color:#ccc;font-size:13px;line-height:2;"&gt;
+      &lt;li&gt;TIN mismatch / IRS B-Notice situations&lt;/li&gt;
+      &lt;li&gt;Ambiguous contractor classification edge cases&lt;/li&gt;
+      &lt;li&gt;Client has unresolved clarification questions&lt;/li&gt;
+      &lt;li&gt;Unusually large payment amounts (fraud check)&lt;/li&gt;
+      &lt;li&gt;Foreign contractor / W-8 complications&lt;/li&gt;
+      &lt;li&gt;Final batch approval before e-filing&lt;/li&gt;
+      &lt;li&gt;Any amended returns (1099-X)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div style="margin-top:16px;background:#1e1e2e;border:1px solid #333;border-radius:10px;padding:16px;"&gt;
+  &lt;div class="label"&gt;EFFICIENCY HYPOTHESIS&lt;/div&gt;
+  &lt;p style="font-size:13px;color:#ccc;margin:8px 0 0;"&gt;One human reviewer can oversee 50–100 concurrent jobs with AI handling 90%+ of the work autonomously. This is the unit economics story — service-level pricing at software-level costs.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+### Pricing Model
+
+&lt;div class="dv-wrap"&gt;
+&lt;h2&gt;Pricing Model&lt;/h2&gt;
+&lt;p class="subtitle"&gt;Per-engagement, season-based — positioned between DIY software and an accounting firm&lt;/p&gt;
+
+&lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;"&gt;
+  &lt;div style="background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:18px;text-align:center;"&gt;
+    &lt;div class="label" style="color:#6366f1;"&gt;STARTER&lt;/div&gt;
+    &lt;div style="font-size:32px;font-weight:700;color:#fff;margin:10px 0 4px;"&gt;$299&lt;/div&gt;
+    &lt;div style="font-size:12px;color:#aaa;margin-bottom:14px;"&gt;per tax season&lt;/div&gt;
+    &lt;ul style="padding-left:16px;color:#ccc;font-size:13px;line-height:2;margin:0;text-align:left;"&gt;
+      &lt;li&gt;Up to 25 contractors&lt;/li&gt;
+      &lt;li&gt;1099-NEC + 1099-MISC&lt;/li&gt;
+      &lt;li&gt;E-file + PDF delivery&lt;/li&gt;
+      &lt;li&gt;Agent comms via portal&lt;/li&gt;
+      &lt;li&gt;1 revision round&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div style="margin-top:12px;font-size:11px;color:#6366f1;"&gt;~$12/contractor&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style="background:#1e1e2e;border:2px solid #8b5cf6;border-radius:10px;padding:18px;text-align:center;position:relative;"&gt;
+    &lt;div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:#8b5cf6;color:white;font-size:11px;font-weight:700;padding:2px 12px;border-radius:20px;"&gt;MOST COMMON&lt;/div&gt;
+    &lt;div class="label" style="color:#8b5cf6;"&gt;GROWTH&lt;/div&gt;
+    &lt;div style="font-size:32px;font-weight:700;color:#fff;margin:10px 0 4px;"&gt;$699&lt;/div&gt;
+    &lt;div style="font-size:12px;color:#aaa;margin-bottom:14px;"&gt;per tax season&lt;/div&gt;
+    &lt;ul style="padding-left:16px;color:#ccc;font-size:13px;line-height:2;margin:0;text-align:left;"&gt;
+      &lt;li&gt;Up to 100 contractors&lt;/li&gt;
+      &lt;li&gt;All 1099 form types&lt;/li&gt;
+      &lt;li&gt;E-file + PDF delivery&lt;/li&gt;
+      &lt;li&gt;TIN verification included&lt;/li&gt;
+      &lt;li&gt;Unlimited revisions&lt;/li&gt;
+      &lt;li&gt;Priority turnaround (48h)&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div style="margin-top:12px;font-size:11px;color:#8b5cf6;"&gt;~$7/contractor&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div style="background:#1e1e2e;border:1px solid #10b981;border-radius:10px;padding:18px;text-align:center;"&gt;
+    &lt;div class="label" style="color:#10b981;"&gt;ENTERPRISE&lt;/div&gt;
+    &lt;div style="font-size:32px;font-weight:700;color:#fff;margin:10px 0 4px;"&gt;Custom&lt;/div&gt;
+    &lt;div style="font-size:12px;color:#aaa;margin-bottom:14px;"&gt;per tax season&lt;/div&gt;
+    &lt;ul style="padding-left:16px;color:#ccc;font-size:13px;line-height:2;margin:0;text-align:left;"&gt;
+      &lt;li&gt;100+ contractors&lt;/li&gt;
+      &lt;li&gt;All form types + amendments&lt;/li&gt;
+      &lt;li&gt;Dedicated reviewer&lt;/li&gt;
+      &lt;li&gt;State filing add-on&lt;/li&gt;
+      &lt;li&gt;SLA guarantee&lt;/li&gt;
+      &lt;li&gt;White-glove onboarding&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div style="margin-top:12px;font-size:11px;color:#10b981;"&gt;Talk to sales&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div style="margin-top:16px;background:#1e1e2e;border:1px solid #333;border-radius:10px;padding:14px;"&gt;
+  &lt;div class="label"&gt;COMPETITIVE CONTEXT&lt;/div&gt;
+  &lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px;text-align:center;"&gt;
+    &lt;div&gt;
+      &lt;div style="font-size:13px;color:#aaa;margin-bottom:4px;"&gt;DIY Software&lt;/div&gt;
+      &lt;div style="font-size:18px;font-weight:700;color:#ef4444;"&gt;$50–150&lt;/div&gt;
+      &lt;div style="font-size:11px;color:#555;margin-top:2px;"&gt;Track1099, Tax1099 — you do all the work&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div style="border-left:1px solid #333;border-right:1px solid #333;"&gt;
+      &lt;div style="font-size:13px;color:#6366f1;margin-bottom:4px;font-weight:600;"&gt;AI Agency (us)&lt;/div&gt;
+      &lt;div style="font-size:18px;font-weight:700;color:#6366f1;"&gt;$299–699&lt;/div&gt;
+      &lt;div style="font-size:11px;color:#555;margin-top:2px;"&gt;Done-for-you, human-backed&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div&gt;
+      &lt;div style="font-size:13px;color:#aaa;margin-bottom:4px;"&gt;Accounting Firm&lt;/div&gt;
+      &lt;div style="font-size:18px;font-weight:700;color:#ef4444;"&gt;$1,500–5,000+&lt;/div&gt;
+      &lt;div style="font-size:11px;color:#555;margin-top:2px;"&gt;Traditional outsourcing&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+### MVP Scope
+
+&lt;div class="dv-wrap"&gt;
+&lt;h2&gt;MVP Scope — What You Build First&lt;/h2&gt;
+&lt;p class="subtitle"&gt;Smallest thing that validates: will midsized companies pay for done-for-you 1099 processing?&lt;/p&gt;
+
+&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"&gt;
+  &lt;div&gt;
+    &lt;div class="label" style="color:#10b981;margin-bottom:10px;"&gt;IN SCOPE — Build this&lt;/div&gt;
+    &lt;div style="display:flex;flex-direction:column;gap:8px;"&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Simple upload portal&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Company creates an account, submits job with CSV/Excel upload. No integrations yet.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;AI processing pipeline&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Parse data, validate, classify, generate 1099 drafts. Flag exceptions.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Internal reviewer dashboard&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Your team sees the AI's work, resolves flags, approves batch before filing.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Async client messaging&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Agent sends email or portal message when client input is needed.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;PDF generation + delivery&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Generate 1099 PDFs, deliver via portal download.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #10b981;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#fff;"&gt;Stripe payments&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#aaa;margin:3px 0 0;"&gt;Client pays at job submission. Simple flat-fee checkout.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div&gt;
+    &lt;div class="label" style="color:#ef4444;margin-bottom:10px;"&gt;OUT OF SCOPE — Save for later&lt;/div&gt;
+    &lt;div style="display:flex;flex-direction:column;gap:8px;"&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;IRS e-filing integration&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Manually file via IRS FIRE in v1 — validate demand before automating this.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;QuickBooks / Gusto integrations&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Upload model first. Integrations are v2 after upload is proven.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;Contractor-facing portal&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Email PDFs to contractors in v1. Portal for contractors is a later UX improvement.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;State filing&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Federal only for MVP. State requirements vary significantly.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;Multi-service offerings&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;1099 only. Bookkeeping, AP/AR, etc. come after this is proven.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div style="background:#1e1e2e;border-left:3px solid #333;border-radius:0 8px 8px 0;padding:12px 14px;"&gt;
+        &lt;div style="font-size:13px;font-weight:600;color:#666;"&gt;Named agent persona&lt;/div&gt;
+        &lt;p style="font-size:12px;color:#555;margin:3px 0 0;"&gt;Communications come from the brand in v1, not a named AI persona.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div style="margin-top:16px;background:#1e1e2e;border:1px solid #6366f1;border-radius:10px;padding:16px;"&gt;
+  &lt;div class="label" style="color:#6366f1;"&gt;VALIDATION SIGNAL&lt;/div&gt;
+  &lt;p style="font-size:13px;color:#ccc;margin:8px 0 0;"&gt;MVP is validated when &lt;strong style="color:#fff;"&gt;5 paying companies&lt;/strong&gt; complete a full job cycle and at least 3 say they'd use it again next year. That proves willingness to pay + trust in the output.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
 ## Action Items
 - [ ] Have friend (tax domain expert) review the agent model's escalation cases and tax-specific rules
 - [ ] Validate pricing with potential customers before committing
@@ -333,7 +622,7 @@ Chase and a friend were discussing a Y Combinator-inspired idea: build an AI age
     </main>
 
     <footer class="note-footer">
-      <span>Generated Fri, 22 May 2026 02:56:34 GMT</span>
+      <span>Generated Fri, 22 May 2026 03:06:18 GMT</span>
       <span><a href="https://notes.thethoughtdungeon.com">notes.thethoughtdungeon.com</a></span>
     </footer>
   </div>
