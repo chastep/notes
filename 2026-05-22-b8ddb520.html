@@ -142,7 +142,6 @@
 
     /* ── Content areas ── */
     #html-view { display: block; }
-    #md-view   { display: none; }
 
     /* ── Prose (rendered HTML view) ── */
     .prose h1, .prose h2, .prose h3 {
@@ -212,24 +211,6 @@
       font-style: italic;
     }
 
-    /* ── Raw markdown view ── */
-    .md-raw-wrap {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.25rem;
-      overflow-x: auto;
-    }
-
-    .md-raw-wrap pre {
-      font-family: var(--mono);
-      font-size: 0.82rem;
-      line-height: 1.6;
-      color: var(--fg);
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
     /* ── Footer ── */
     .note-footer {
       margin-top: 3rem;
@@ -270,8 +251,7 @@
         <a class="permalink" href="https://notes.thethoughtdungeon.com/2026-05-22-b8ddb520" title="Permalink">permalink</a>
       </div>
       <div class="controls">
-        <button class="btn" id="btn-toggle" onclick="toggleView()">show markdown</button>
-        <button class="btn" id="btn-copy" onclick="copyMarkdown()">copy markdown</button>
+        <button class="btn" id="btn-claude" onclick="copyForClaude()">copy for Claude</button>
       </div>
     </header>
 
@@ -622,496 +602,59 @@
 <h2>Action Items</h2>
 <ul><li><input type="checkbox" checked disabled> Have tax domain expert (Will Rosler) review agent model and 1099 rules</li><li><input type="checkbox" checked disabled> Move to implementation planning — Plan 1 written (10 tasks, 20 tests)</li><li><input type="checkbox" checked disabled> Decide tech stack — Next.js 15, Prisma + Neon, Clerk, Stripe, Inngest, Sentry, Resend</li><li><input type="checkbox" checked disabled> Decide data ingestion strategy — QBO OAuth + CSV with AccountingProvider interface</li><li><input type="checkbox" disabled> Validate pricing ($299/$699) with 2–3 potential customers before launch</li><li><input type="checkbox" disabled> Research IRS FIRE system requirements for e-filing authorization</li><li><input type="checkbox" disabled> Determine legal/liability structure for an agency filing on behalf of clients</li><li><input type="checkbox" disabled> Define go-to-market strategy for acquiring first 5 customers</li><li><input type="checkbox" disabled> Execute Plan 1 — Foundation &amp; Client Portal</li><li><input type="checkbox" disabled> Write and execute Plan 2 — AI Processing Pipeline &amp; Reviewer Dashboard</li><li><input type="checkbox" disabled> Write and execute Plan 3 — W-9 Chase, PDFs &amp; Delivery</li></ul>
       </div>
-
-      <div id="md-view">
-        <div class="md-raw-wrap">
-          <pre id="md-raw">---
-title: "AI Agency Business Concept — 1099 Processing MVP"
-uuid: 2026-05-22-b8ddb520
-date: 2026-05-22
-published_at: 2026-05-23T14:36:35.331Z
-description: "Designing and planning an AI-powered managed service agency for 1099 processing — concept, domain context, tech stack decisions, and a full 3-plan implementation roadmap."
----
-
-# AI Agency Business Concept — 1099 Processing MVP
-
-&lt;script&gt;
-(function() {
-  var SIDEBAR_WIDTH = 220;
-  var BREAKPOINT = 768;
-  var sidebar = null;
-  var shell = null;
-
-  function isDesktop() { return window.innerWidth &gt;= BREAKPOINT; }
-
-  function applyDesktop() {
-    document.documentElement.style.overflow = 'hidden';
-    document.documentElement.style.height = '100%';
-    document.body.style.overflow = 'hidden';
-    document.body.style.height = '100%';
-    document.body.style.margin = '0';
-    if (sidebar) sidebar.style.display = 'flex';
-    if (shell) shell.style.cssText = 'position:fixed;left:' + SIDEBAR_WIDTH + 'px;right:0;top:0;bottom:0;overflow-y:auto;max-width:none;margin:0;padding:2rem 3rem 4rem;box-sizing:border-box;';
-  }
-
-  function applyMobile() {
-    document.documentElement.style.overflow = '';
-    document.documentElement.style.height = '';
-    document.body.style.overflow = '';
-    document.body.style.height = '';
-    document.body.style.margin = '';
-    if (sidebar) sidebar.style.display = 'none';
-    if (shell) shell.style.cssText = '';
-  }
-
-  function buildLayout() {
-    var headings = document.querySelectorAll('.prose h2, .prose h3');
-    if (!headings.length) return;
-
-    shell = document.querySelector('.shell');
-
-    sidebar = document.createElement('nav');
-    sidebar.id = 'sidenav';
-    sidebar.style.cssText = 'position:fixed;top:0;left:0;width:' + SIDEBAR_WIDTH + 'px;height:100vh;overflow:hidden;background:#1a1918;border-right:1px solid rgba(255,255,255,0.07);flex-direction:column;z-index:200;display:none;';
-
-    var titleArea = document.createElement('div');
-    titleArea.style.cssText = 'padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;';
-    var siteTitle = document.createElement('div');
-    siteTitle.textContent = 'AI Agency';
-    siteTitle.style.cssText = 'font-size:13px;font-weight:700;color:#d1cfc5;letter-spacing:0.01em;';
-    var siteSub = document.createElement('div');
-    siteSub.textContent = '1099 Processing MVP';
-    siteSub.style.cssText = 'font-size:10px;color:#6b6860;margin-top:2px;';
-    titleArea.appendChild(siteTitle);
-    titleArea.appendChild(siteSub);
-    sidebar.appendChild(titleArea);
-
-    var navLabel = document.createElement('div');
-    navLabel.textContent = 'ON THIS PAGE';
-    navLabel.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:#6b6860;font-family:monospace;padding:14px 16px 6px;flex-shrink:0;';
-    sidebar.appendChild(navLabel);
-
-    var linksWrap = document.createElement('div');
-    linksWrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;';
-    sidebar.appendChild(linksWrap);
-
-    var links = [];
-    headings.forEach(function(h) {
-      if (!h.id) { h.id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
-      var isH3 = h.tagName === 'H3';
-      var a = document.createElement('a');
-      a.href = '#' + h.id;
-      a.textContent = h.textContent;
-      a.dataset.target = h.id;
-      a.style.cssText = 'display:block;padding:' + (isH3 ? '2px 16px 2px 28px' : '4px 16px') + ';font-size:' + (isH3 ? '11px' : '12px') + ';color:' + (isH3 ? '#555' : '#9e9c94') + ';text-decoration:none;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.1s;border-left:2px solid transparent;';
-      a.addEventListener('mouseenter', function() { if (!this.classList.contains('active')) this.style.color = '#D97757'; });
-      a.addEventListener('mouseleave', function() { if (!this.classList.contains('active')) this.style.color = isH3 ? '#555' : '#9e9c94'; });
-      a.addEventListener('click', function(e) {
-        var scrollTarget = document.getElementById(this.dataset.target);
-        if (!scrollTarget) return;
-        if (isDesktop() &amp;&amp; shell) {
-          e.preventDefault();
-          shell.scrollTo({ top: scrollTarget.offsetTop - 28, behavior: 'smooth' });
-        }
-      });
-      linksWrap.appendChild(a);
-      links.push({ el: a, headingId: h.id, isH3: isH3 });
-    });
-
-    document.body.appendChild(sidebar);
-
-    function updateActive() {
-      var scrollTop = (isDesktop() &amp;&amp; shell ? shell.scrollTop : window.scrollY) + 60;
-      var current = null;
-      headings.forEach(function(h) { if (h.offsetTop &lt;= scrollTop) current = h.id; });
-      links.forEach(function(link) {
-        var active = link.headingId === current;
-        link.el.style.color = active ? '#D97757' : (link.isH3 ? '#555' : '#9e9c94');
-        link.el.style.borderLeftColor = active ? '#D97757' : 'transparent';
-        link.el.style.fontWeight = active ? '600' : 'normal';
-      });
-    }
-
-    if (shell) shell.addEventListener('scroll', updateActive);
-    window.addEventListener('scroll', updateActive);
-
-    function onResize() {
-      if (isDesktop()) { applyDesktop(); } else { applyMobile(); }
-      updateActive();
-    }
-    window.addEventListener('resize', onResize);
-    onResize();
-  }
-
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', buildLayout); } else { buildLayout(); }
-})();
-&lt;/script&gt;
-
-&lt;style&gt;
-.dv-wrap { background: #1a1918; border-radius: 12px; padding: 20px; margin: 16px 0; font-family: system-ui, sans-serif; border: 1px solid rgba(255,255,255,0.07); }
-.dv-wrap .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-weight: 600; }
-.dv-wrap .subtitle { font-size: 14px; color: #aaa; margin: 4px 0 16px; }
-.dv-wrap h2 { color: #fff; font-size: 18px; margin: 0 0 4px; }
-.dv-wrap h3 { color: #eee; font-size: 14px; margin: 6px 0 4px; }
-.dv-wrap p { margin: 0; }
-.plan-panel { background: #222120; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 14px; }
-.plan-chip { font-size: 11px; background: #2a2927; color: #9e9c94; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px 2px 2px 0; }
-.plan-chip-green { color: #7eb87e; }
-@media (max-width: 767px) {
-  .dv-wrap { padding: 14px; }
-  [style*="grid-template-columns:1fr 1fr"] { display: flex !important; flex-direction: column !important; }
-  [style*="grid-template-columns:1fr 1fr 1fr"] { display: flex !important; flex-direction: column !important; }
-  [style*="grid-template-columns:148px"] { grid-template-columns: 1fr !important; }
-}
-&lt;/style&gt;
-
-## Summary
-
-Chase and a friend were discussing a Y Combinator-inspired idea: build an AI agency that replaces professional services headcount with AI agents, starting with accounting and finance. Through brainstorming, the concept crystallized into a **managed service** model — not SaaS — targeting midsized companies for 1099 processing. The core insight: charge service-level prices ($299–$699/season) while delivering at software-level costs.
-
-A tax domain expert (Will Rosler) reviewed the concept and added critical domain detail: the real complexity in 1099 processing isn't the filing itself — it's getting the correct vendor list in the first place. QBO exports aren't cash-basis-aware, CC payments must be excluded, C-corps don't qualify, and the $600 threshold applies to cash payments only. These upstream cleanup steps are where the AI earns its keep.
-
-The implementation plan is now underway. Plan 1 (Foundation &amp; Client Portal) is fully written: 10 tasks, 20 tests, covering auth, database, QBO OAuth, CSV upload, Stripe checkout, and a provider-agnostic AccountingProvider interface. Plans 2 and 3 cover the AI processing pipeline and W-9 chase/delivery workflows.
-
-## Key Topics
-
-- AI agency as managed service (not SaaS product)
-- 1099 processing as the initial service offering and validation wedge
-- QBO OAuth + CSV upload with provider-agnostic AccountingProvider interface
-- Client journey: Submit → Compile → Chase W-9s → Review → Clarify → File
-- Agent model: AI handles ~90% autonomously, human reviewer handles escalations
-- Three-tier pricing: $299 Starter / $699 Growth / Enterprise custom
-- Tech stack: Next.js 15, Prisma + Neon, Clerk, Stripe, Inngest, Sentry, Resend
-- MVP scope with deliberate deferrals (IRS e-filing, state filing, phone outreach)
-
-## Decisions &amp; Insights
-
-- **Managed service, not SaaS** — positions as an agency replacing a firm, not competing with Track1099/Tax1099
-- **1099 processing as wedge** — time-boxed, repeatable, high client stress, binary output, clear AI fit
-- **Target customer: midsized companies** — have budget to outsource, no full finance team
-- **IRS e-filing deferred** — do it manually first to validate demand before automating
-- **QBO OAuth added to MVP** — pull raw transactions directly from API; exports aren't cash-basis-aware
-- **Provider-agnostic AccountingProvider interface** — QBO + CSV both implement same contract; Xero/FreshBooks added with no downstream changes
-- **Inngest for job queue** — durable background functions for AI pipeline steps, no persistent worker needed on Vercel
-- **Resend for email** — W-9 outreach, status notifications, contractor copies; free tier covers MVP
-- **Sentry for errors** — critical for a financial product with paying clients
-- **Upfront payment at submission** — no free processing, clean cash flow, filters uncommitted clients
-- **Validation signal**: 5 paying companies complete a full job, 3 say they'd return next year
-
-## Design Visuals
-
-### Client Journey
-
-&lt;div class="dv-wrap" id="design-client-journey"&gt;
-&lt;h2&gt;Client Journey&lt;/h2&gt;
-&lt;p class="subtitle"&gt;1099 Processing — end to end&lt;/p&gt;
-
-&lt;div style="display:flex;align-items:flex-start;gap:0;flex-wrap:nowrap;overflow-x:auto;"&gt;
-  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;"&gt;
-    &lt;div style="width:44px;height:44px;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;"&gt;1&lt;/div&gt;
-    &lt;div style="width:2px;height:20px;background:#6366f1;opacity:0.3;"&gt;&lt;/div&gt;
-    &lt;div style="background:#222120;border:1px solid #6366f1;border-radius:10px;padding:12px;text-align:center;width:108px;"&gt;
-      &lt;div class="label" style="color:#6366f1;"&gt;CLIENT&lt;/div&gt;
-      &lt;h3 style="margin:5px 0 3px;font-size:13px;"&gt;Submit&lt;/h3&gt;
-      &lt;p style="font-size:11px;color:#aaa;margin:0;"&gt;Connect QBO or upload CSV. Pay upfront via Stripe.&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;"&gt;→&lt;/div&gt;
-  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;"&gt;
-    &lt;div style="width:44px;height:44px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;"&gt;2&lt;/div&gt;
-    &lt;div style="width:2px;height:20px;background:#8b5cf6;opacity:0.3;"&gt;&lt;/div&gt;
-    &lt;div style="background:#222120;border:1px solid #8b5cf6;border-radius:10px;padding:12px;text-align:center;width:108px;"&gt;
-      &lt;div class="label" style="color:#8b5cf6;"&gt;AI AGENT&lt;/div&gt;
-      &lt;h3 style="margin:5px 0 3px;font-size:13px;"&gt;Compile&lt;/h3&gt;
-      &lt;p style="font-size:11px;color:#aaa;margin:0;"&gt;Cash-basis filter, CC exclusion, $600 threshold, form type mapping&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;"&gt;→&lt;/div&gt;
-  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;"&gt;
-    &lt;div style="width:44px;height:44px;border-radius:50%;background:#a855f7;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;"&gt;3&lt;/div&gt;
-    &lt;div style="width:2px;height:20px;background:#a855f7;opacity:0.3;"&gt;&lt;/div&gt;
-    &lt;div style="background:#222120;border:1px solid #a855f7;border-radius:10px;padding:12px;text-align:center;width:108px;"&gt;
-      &lt;div class="label" style="color:#a855f7;"&gt;AGENT&lt;/div&gt;
-      &lt;h3 style="margin:5px 0 3px;font-size:13px;"&gt;Chase W-9s&lt;/h3&gt;
-      &lt;p style="font-size:11px;color:#aaa;margin:0;"&gt;Automated email outreach to vendors missing W-9&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;"&gt;→&lt;/div&gt;
-  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;"&gt;
-    &lt;div style="width:44px;height:44px;border-radius:50%;background:#ec4899;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;"&gt;4&lt;/div&gt;
-    &lt;div style="width:2px;height:20px;background:#ec4899;opacity:0.3;"&gt;&lt;/div&gt;
-    &lt;div style="background:#222120;border:1px solid #ec4899;border-radius:10px;padding:12px;text-align:center;width:108px;"&gt;
-      &lt;div class="label" style="color:#ec4899;"&gt;HUMAN QA&lt;/div&gt;
-      &lt;h3 style="margin:5px 0 3px;font-size:13px;"&gt;Review&lt;/h3&gt;
-      &lt;p style="font-size:11px;color:#aaa;margin:0;"&gt;Reviewer resolves flags, approves batch&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;"&gt;→&lt;/div&gt;
-  &lt;div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;"&gt;
-    &lt;div style="width:44px;height:44px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;"&gt;5&lt;/div&gt;
-    &lt;div style="width:2px;height:20px;background:#10b981;opacity:0.3;"&gt;&lt;/div&gt;
-    &lt;div style="background:#222120;border:1px solid #10b981;border-radius:10px;padding:12px;text-align:center;width:108px;"&gt;
-      &lt;div class="label" style="color:#10b981;"&gt;DELIVER&lt;/div&gt;
-      &lt;h3 style="margin:5px 0 3px;font-size:13px;"&gt;Done&lt;/h3&gt;
-      &lt;p style="font-size:11px;color:#aaa;margin:0;"&gt;E-filed + PDFs to client. Contractor copies emailed.&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;"&gt;
-  &lt;div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"&gt;&lt;div class="label"&gt;Proactive Communication&lt;/div&gt;&lt;p style="font-size:12px;color:#ccc;margin:5px 0 0;"&gt;Agent reaches out when something is missing — client never chases status&lt;/p&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"&gt;&lt;div class="label"&gt;Accountability&lt;/div&gt;&lt;p style="font-size:12px;color:#ccc;margin:5px 0 0;"&gt;Human signs off before anything is filed — agency owns the outcome&lt;/p&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"&gt;&lt;div class="label"&gt;Service Pricing&lt;/div&gt;&lt;p style="font-size:12px;color:#ccc;margin:5px 0 0;"&gt;Per engagement per season — aligns with how clients think about outsourcing&lt;/p&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-### Agent Model
-
-&lt;div class="dv-wrap" id="design-agent-model"&gt;
-&lt;h2&gt;The Agent Model — AI + Human Split&lt;/h2&gt;
-&lt;p class="subtitle"&gt;What AI handles autonomously vs. what escalates to human review&lt;/p&gt;
-
-&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"&gt;
-  &lt;div style="background:#222120;border:1px solid #6366f1;border-radius:10px;padding:16px;"&gt;
-    &lt;div class="label" style="color:#6366f1;"&gt;AI AGENT — Handles Autonomously&lt;/div&gt;
-    &lt;ul style="margin:10px 0 0;padding-left:16px;color:#ccc;font-size:12px;line-height:2;"&gt;&lt;li&gt;Parse and normalize data (CSV, QBO API pull)&lt;/li&gt;&lt;li&gt;Apply cash-basis filter — exclude CC transactions&lt;/li&gt;&lt;li&gt;Apply entity-type exclusions (C-corps, accounting firms)&lt;/li&gt;&lt;li&gt;Apply $600 threshold per vendor&lt;/li&gt;&lt;li&gt;Map to correct 1099 form type (NEC, MISC, INT)&lt;/li&gt;&lt;li&gt;Detect duplicate payees&lt;/li&gt;&lt;li&gt;Identify vendors with missing W-9s&lt;/li&gt;&lt;li&gt;Send automated W-9 request emails via Resend&lt;/li&gt;&lt;li&gt;Validate TIN format&lt;/li&gt;&lt;li&gt;Generate 1099 PDFs (Handlebars + Puppeteer)&lt;/li&gt;&lt;li&gt;Email contractor copies&lt;/li&gt;&lt;/ul&gt;
-  &lt;/div&gt;
-  &lt;div style="background:#222120;border:1px solid #D97757;border-radius:10px;padding:16px;"&gt;
-    &lt;div class="label" style="color:#D97757;"&gt;HUMAN REVIEWER — Escalated Cases&lt;/div&gt;
-    &lt;ul style="margin:10px 0 0;padding-left:16px;color:#ccc;font-size:12px;line-height:2;"&gt;&lt;li&gt;TIN mismatch / IRS B-Notice situations&lt;/li&gt;&lt;li&gt;Vendors who haven't returned W-9 after outreach&lt;/li&gt;&lt;li&gt;Ambiguous payment method classification&lt;/li&gt;&lt;li&gt;Ambiguous entity type (C-corp vs sole proprietor)&lt;/li&gt;&lt;li&gt;Unusually large payment amounts (fraud check)&lt;/li&gt;&lt;li&gt;Foreign contractor / W-8 complications&lt;/li&gt;&lt;li&gt;Final batch approval before e-filing&lt;/li&gt;&lt;li&gt;Amended returns (1099-X)&lt;/li&gt;&lt;/ul&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-&lt;div style="margin-top:12px;background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;"&gt;&lt;div class="label"&gt;EFFICIENCY HYPOTHESIS&lt;/div&gt;&lt;p style="font-size:12px;color:#ccc;margin:6px 0 0;"&gt;One human reviewer can oversee 50–100 concurrent jobs with AI handling 90%+ autonomously. Service-level pricing at software-level costs.&lt;/p&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-### Pricing Model
-
-&lt;div class="dv-wrap" id="design-pricing"&gt;
-&lt;h2&gt;Pricing Model&lt;/h2&gt;
-&lt;p class="subtitle"&gt;Per-engagement, season-based — between DIY software and an accounting firm&lt;/p&gt;
-
-&lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;"&gt;
-  &lt;div style="background:#222120;border:1px solid #6366f1;border-radius:10px;padding:16px;text-align:center;"&gt;&lt;div class="label" style="color:#6366f1;"&gt;STARTER&lt;/div&gt;&lt;div style="font-size:28px;font-weight:700;color:#fff;margin:8px 0 3px;"&gt;$299&lt;/div&gt;&lt;div style="font-size:11px;color:#aaa;margin-bottom:12px;"&gt;per tax season&lt;/div&gt;&lt;ul style="padding-left:14px;color:#ccc;font-size:12px;line-height:1.9;margin:0;text-align:left;"&gt;&lt;li&gt;Up to 25 contractors&lt;/li&gt;&lt;li&gt;1099-NEC + 1099-MISC&lt;/li&gt;&lt;li&gt;E-file + PDF delivery&lt;/li&gt;&lt;li&gt;Agent comms via portal&lt;/li&gt;&lt;/ul&gt;&lt;div style="margin-top:10px;font-size:11px;color:#6366f1;"&gt;~$12/contractor&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border:2px solid #8b5cf6;border-radius:10px;padding:16px;text-align:center;position:relative;"&gt;&lt;div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#8b5cf6;color:white;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;"&gt;MOST COMMON&lt;/div&gt;&lt;div class="label" style="color:#8b5cf6;"&gt;GROWTH&lt;/div&gt;&lt;div style="font-size:28px;font-weight:700;color:#fff;margin:8px 0 3px;"&gt;$699&lt;/div&gt;&lt;div style="font-size:11px;color:#aaa;margin-bottom:12px;"&gt;per tax season&lt;/div&gt;&lt;ul style="padding-left:14px;color:#ccc;font-size:12px;line-height:1.9;margin:0;text-align:left;"&gt;&lt;li&gt;Up to 100 contractors&lt;/li&gt;&lt;li&gt;All 1099 form types&lt;/li&gt;&lt;li&gt;TIN verification included&lt;/li&gt;&lt;li&gt;Unlimited revisions&lt;/li&gt;&lt;li&gt;Priority turnaround (48h)&lt;/li&gt;&lt;/ul&gt;&lt;div style="margin-top:10px;font-size:11px;color:#8b5cf6;"&gt;~$7/contractor&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border:1px solid #10b981;border-radius:10px;padding:16px;text-align:center;"&gt;&lt;div class="label" style="color:#10b981;"&gt;ENTERPRISE&lt;/div&gt;&lt;div style="font-size:28px;font-weight:700;color:#fff;margin:8px 0 3px;"&gt;Custom&lt;/div&gt;&lt;div style="font-size:11px;color:#aaa;margin-bottom:12px;"&gt;per tax season&lt;/div&gt;&lt;ul style="padding-left:14px;color:#ccc;font-size:12px;line-height:1.9;margin:0;text-align:left;"&gt;&lt;li&gt;100+ contractors&lt;/li&gt;&lt;li&gt;All form types + amendments&lt;/li&gt;&lt;li&gt;Dedicated reviewer&lt;/li&gt;&lt;li&gt;State filing add-on&lt;/li&gt;&lt;li&gt;SLA guarantee&lt;/li&gt;&lt;/ul&gt;&lt;div style="margin-top:10px;font-size:11px;color:#10b981;"&gt;Talk to sales&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div style="margin-top:12px;background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"&gt;&lt;div class="label"&gt;COMPETITIVE CONTEXT&lt;/div&gt;&lt;div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;text-align:center;"&gt;&lt;div&gt;&lt;div style="font-size:12px;color:#aaa;margin-bottom:3px;"&gt;DIY Software&lt;/div&gt;&lt;div style="font-size:16px;font-weight:700;color:#ef4444;"&gt;$50–150&lt;/div&gt;&lt;div style="font-size:10px;color:#555;margin-top:2px;"&gt;You do all the work&lt;/div&gt;&lt;/div&gt;&lt;div style="border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);"&gt;&lt;div style="font-size:12px;color:#D97757;margin-bottom:3px;font-weight:600;"&gt;AI Agency (us)&lt;/div&gt;&lt;div style="font-size:16px;font-weight:700;color:#D97757;"&gt;$299–699&lt;/div&gt;&lt;div style="font-size:10px;color:#555;margin-top:2px;"&gt;Done-for-you, human-backed&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;color:#aaa;margin-bottom:3px;"&gt;Accounting Firm&lt;/div&gt;&lt;div style="font-size:16px;font-weight:700;color:#ef4444;"&gt;$1,500–5,000+&lt;/div&gt;&lt;div style="font-size:10px;color:#555;margin-top:2px;"&gt;Traditional outsourcing&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-### MVP Scope
-
-&lt;div class="dv-wrap" id="design-mvp-scope"&gt;
-&lt;h2&gt;MVP Scope&lt;/h2&gt;
-&lt;p class="subtitle"&gt;Smallest thing that validates willingness to pay for done-for-you 1099 processing&lt;/p&gt;
-
-&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;"&gt;
-  &lt;div&gt;
-    &lt;div class="label" style="color:#7eb87e;margin-bottom:8px;"&gt;IN SCOPE&lt;/div&gt;
-    &lt;div style="display:flex;flex-direction:column;gap:6px;"&gt;
-      &lt;div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#fff;"&gt;Client upload portal&lt;/div&gt;&lt;p style="font-size:11px;color:#aaa;margin:2px 0 0;"&gt;Account creation, connect QBO via OAuth or upload CSV. Stripe checkout at submission.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#fff;"&gt;AI processing pipeline&lt;/div&gt;&lt;p style="font-size:11px;color:#aaa;margin:2px 0 0;"&gt;Parse, cash-basis filter, classify, generate 1099 drafts via Inngest.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#fff;"&gt;W-9 chase workflow&lt;/div&gt;&lt;p style="font-size:11px;color:#aaa;margin:2px 0 0;"&gt;Identify missing W-9s, automated email via Resend, track responses.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#fff;"&gt;Internal reviewer dashboard&lt;/div&gt;&lt;p style="font-size:11px;color:#aaa;margin:2px 0 0;"&gt;Resolve flags, approve batch before filing.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#fff;"&gt;PDF generation + delivery&lt;/div&gt;&lt;p style="font-size:11px;color:#aaa;margin:2px 0 0;"&gt;Handlebars + Puppeteer. Portal download, email copies to contractors.&lt;/p&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div&gt;
-    &lt;div class="label" style="color:#555;margin-bottom:8px;"&gt;DEFERRED&lt;/div&gt;
-    &lt;div style="display:flex;flex-direction:column;gap:6px;"&gt;
-      &lt;div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#444;"&gt;IRS e-filing integration&lt;/div&gt;&lt;p style="font-size:11px;color:#3a3836;margin:2px 0 0;"&gt;Manual via IRS FIRE in v1.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#444;"&gt;Twilio phone outreach&lt;/div&gt;&lt;p style="font-size:11px;color:#3a3836;margin:2px 0 0;"&gt;Email-only in v1. Phone calls in v2.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#444;"&gt;Xero / FreshBooks OAuth&lt;/div&gt;&lt;p style="font-size:11px;color:#3a3836;margin:2px 0 0;"&gt;Interface built. Implementations deferred.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#444;"&gt;State filing&lt;/div&gt;&lt;p style="font-size:11px;color:#3a3836;margin:2px 0 0;"&gt;Federal only for MVP.&lt;/p&gt;&lt;/div&gt;
-      &lt;div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#444;"&gt;IRS TIN matching API&lt;/div&gt;&lt;p style="font-size:11px;color:#3a3836;margin:2px 0 0;"&gt;Format validation only in v1.&lt;/p&gt;&lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div style="margin-top:12px;background:#222120;border:1px solid #D97757;border-radius:8px;padding:14px;"&gt;&lt;div class="label" style="color:#D97757;"&gt;VALIDATION SIGNAL&lt;/div&gt;&lt;p style="font-size:12px;color:#ccc;margin:6px 0 0;"&gt;&lt;strong style="color:#fff;"&gt;5 paying companies&lt;/strong&gt; complete a full job cycle and at least 3 say they'd use it again next year.&lt;/p&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-## Domain Context
-
-From a tax domain expert review (Will Rosler) — the real complexity of 1099 processing.
-
-### Why the vendor list is hard
-
-QuickBooks vendor totals reporting is not cash-basis-aware and doesn't exclude CC payments automatically. Businesses often pay vendors via multiple methods (ACH for most, check or wire for some), making categorization inconsistent. The AI agent must reconcile raw payment data to produce the correct qualifying vendor list — which is the core value, not the filing itself.
-
-**Rules that matter:**
-
-- Required for any vendor paid $600+ on a cash basis in the tax year
-- Excluded: C-corps, payments to accounting firms, credit card payments
-- Only ACH, wire, and check payments count
-- 1099-NEC (contractors), 1099-MISC (rent, attorneys), 1099-INT (non-bank interest)
-
-### The W-9 catch-22
-
-To determine if a vendor needs a 1099, you need their TIN and entity type (from a W-9). But you need to know they qualify first — which requires having their info. Many vendors slip through onboarding without one. Following up near the January deadline is painful and often ignored. If TINs don't match the IRS name/ID on file, filings bounce back.
-
-The agency solves this by proactively chasing missing W-9s via automated email outreach, well before the filing deadline.
-
-### Market gap
-
-&lt;div class="dv-wrap" id="domain-market-gap"&gt;
-&lt;div style="overflow-x:auto;"&gt;&lt;table style="width:100%;border-collapse:collapse;font-size:12px;"&gt;&lt;thead&gt;&lt;tr style="border-bottom:1px solid rgba(255,255,255,0.1);"&gt;&lt;th style="text-align:left;padding:8px 10px;color:#9e9c94;font-weight:600;"&gt;Solution&lt;/th&gt;&lt;th style="text-align:center;padding:8px 10px;color:#9e9c94;font-weight:600;"&gt;Vendor list cleanup&lt;/th&gt;&lt;th style="text-align:center;padding:8px 10px;color:#9e9c94;font-weight:600;"&gt;W-9 collection&lt;/th&gt;&lt;th style="text-align:center;padding:8px 10px;color:#9e9c94;font-weight:600;"&gt;Filing&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;&lt;tr style="border-bottom:1px solid rgba(255,255,255,0.05);"&gt;&lt;td style="padding:8px 10px;color:#ccc;"&gt;AP software&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#9e9c94;"&gt;Partial&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#9e9c94;"&gt;At onboarding only&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#ef4444;"&gt;No&lt;/td&gt;&lt;/tr&gt;&lt;tr style="border-bottom:1px solid rgba(255,255,255,0.05);"&gt;&lt;td style="padding:8px 10px;color:#ccc;"&gt;DIY software (Track1099)&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#ef4444;"&gt;No&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#ef4444;"&gt;No&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#7eb87e;"&gt;Yes&lt;/td&gt;&lt;/tr&gt;&lt;tr style="border-bottom:1px solid rgba(255,255,255,0.05);"&gt;&lt;td style="padding:8px 10px;color:#ccc;"&gt;Accountants&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#7eb87e;"&gt;Yes&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#7eb87e;"&gt;Yes&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#7eb87e;"&gt;Yes&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style="padding:8px 10px;color:#D97757;font-weight:600;"&gt;AI Agency (us)&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#7eb87e;font-weight:600;"&gt;Yes&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#7eb87e;font-weight:600;"&gt;Yes (automated)&lt;/td&gt;&lt;td style="text-align:center;padding:8px 10px;color:#7eb87e;font-weight:600;"&gt;Yes&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-## Data Ingestion Strategy
-
-Both paths produce identical normalized output — the rest of the pipeline is unchanged regardless of source.
-
-&lt;div class="dv-wrap" id="data-ingestion"&gt;
-&lt;h2&gt;AccountingProvider Interface&lt;/h2&gt;
-&lt;p class="subtitle"&gt;Provider-agnostic — QBO is the first implementation, CSV is the fallback&lt;/p&gt;
-
-&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;"&gt;
-  &lt;div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"&gt;&lt;div class="label" style="color:#D97757;margin-bottom:6px;"&gt;QBO OAuth 2.0&lt;/div&gt;&lt;p style="font-size:12px;color:#aaa;margin:0 0 6px;"&gt;Pulls raw Purchase + BillPayment transactions directly from QBO API. Cash-basis filter and CC exclusion applied server-side.&lt;/p&gt;&lt;p style="font-size:11px;color:#555;margin:0;"&gt;Scope: com.intuit.quickbooks.accounting&lt;/p&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"&gt;&lt;div class="label" style="color:#D97757;margin-bottom:6px;"&gt;CSV Upload&lt;/div&gt;&lt;p style="font-size:12px;color:#aaa;margin:0 0 6px;"&gt;Manual fallback. Columns: vendor name, amount, payment method, entity type, EIN, date. Works for any accounting tool.&lt;/p&gt;&lt;p style="font-size:11px;color:#555;margin:0;"&gt;Future: Xero, FreshBooks, Wave — same interface, no downstream changes.&lt;/p&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div style="background:#2a2927;border-radius:8px;padding:14px;"&gt;&lt;pre style="font-size:11.5px;color:#ccc;margin:0;overflow-x:auto;"&gt;&lt;code&gt;interface AccountingProvider {
-  id: string
-  label: string
-  getAuthUrl(state: string): string
-  exchangeCode(code: string, realmId?: string): Promise&amp;lt;OAuthTokens&amp;gt;
-  fetchTransactions(tokens: OAuthTokens, year: number): Promise&amp;lt;RawTransaction[]&amp;gt;
-}
-
-interface RawTransaction {
-  vendorName: string
-  vendorEmail: string | null
-  amountCents: number
-  paymentMethod: 'ach' | 'check' | 'wire' | 'credit_card' | 'unknown'
-  entityType: string | null
-  ein: string | null
-  date: string
-}&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-## Tech Stack
-
-&lt;div class="dv-wrap" id="tech-stack"&gt;
-&lt;h2&gt;Confirmed Stack — Lean MVP&lt;/h2&gt;
-&lt;p class="subtitle"&gt;Each service earns its place. Nothing speculative.&lt;/p&gt;
-
-&lt;div style="display:flex;flex-direction:column;gap:6px;"&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Next.js 15 + TypeScript&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;App Router. Server components fetch via Prisma. Mutations via API routes. Vitest for tests.&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Prisma 5 + Neon&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;Serverless Postgres. Models: User, Job, Payment, Vendor, Connection, Message. Scales to zero.&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Clerk&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;Auth — sign-up, sign-in, Google OAuth, webhook to sync User to DB.&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Stripe&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;Flat-fee Checkout Sessions. Webhook confirms payment → fires Inngest pipeline event.&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Inngest&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;Durable background job queue. Each pipeline stage is one Inngest function. Built-in retry, observability. No persistent worker on Vercel.&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Sentry&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;Error monitoring. Know when a client's pipeline job fails. Critical for a financial product.&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Resend&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;Transactional email — W-9 outreach, status notifications, 1099 copies to contractors. Free tier covers MVP.&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#D97757;"&gt;Puppeteer + Handlebars&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;"&gt;Server-side PDF generation. HTML templates → headless Chrome → PDF. No external service needed.&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div style="margin-top:10px;background:#222120;border-radius:8px;padding:11px 12px;"&gt;&lt;div class="label" style="color:#444;margin-bottom:6px;"&gt;DEFERRED&lt;/div&gt;&lt;div style="display:flex;flex-wrap:wrap;gap:5px;"&gt;&lt;span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;"&gt;Twilio (phone v2)&lt;/span&gt;&lt;span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;"&gt;Fax.plus (v2)&lt;/span&gt;&lt;span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;"&gt;IRS FIRE API (v2)&lt;/span&gt;&lt;span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;"&gt;IRS TIN Matching (v2)&lt;/span&gt;&lt;span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;"&gt;Axiom logs&lt;/span&gt;&lt;span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;"&gt;PostHog analytics&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-## Implementation Plan
-
-Three sequential plans. Each produces working, testable software on its own.
-
-### Plan 1 — Foundation &amp; Client Portal
-
-&lt;div class="dv-wrap" id="plan1"&gt;
-&lt;h2&gt;Plan 1 — Foundation &amp; Client Portal&lt;/h2&gt;
-&lt;p class="subtitle"&gt;Status: written · 10 tasks · 20 tests · ready to execute&lt;/p&gt;
-
-&lt;div style="display:flex;flex-direction:column;gap:7px;"&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;1&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Scaffold the Project&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;create-next-app · install Inngest, Sentry, Resend · Vitest config&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;package.json&lt;/span&gt;&lt;span class="plan-chip"&gt;vitest.config.ts&lt;/span&gt;&lt;span class="plan-chip"&gt;.env.local.example&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;2&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Prisma Schema + Database&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;User · Job · Payment · Vendor · Connection · Message&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;prisma/schema.prisma&lt;/span&gt;&lt;span class="plan-chip"&gt;src/lib/db.ts&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;3&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Clerk Auth + Middleware&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;Sign-in · Sign-up · protect /dashboard · user sync webhook&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;src/middleware.ts&lt;/span&gt;&lt;span class="plan-chip"&gt;app/(auth)/sign-in&lt;/span&gt;&lt;span class="plan-chip"&gt;api/clerk/webhook&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;4&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Pricing Utilities&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;Tier definitions · $299 Starter · $699 Growth · limits&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;src/lib/pricing.ts&lt;/span&gt;&lt;span class="plan-chip plan-chip-green"&gt;6 tests&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;5&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;CSV Parsing — Business Logic&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;$600 threshold · exclude CC payments · exclude C-corps&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;src/lib/csv.ts&lt;/span&gt;&lt;span class="plan-chip plan-chip-green"&gt;7 tests&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;6&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Job API&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;POST /api/jobs · GET /api/jobs/[id]&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;api/jobs/route.ts&lt;/span&gt;&lt;span class="plan-chip"&gt;api/jobs/[id]/route.ts&lt;/span&gt;&lt;span class="plan-chip plan-chip-green"&gt;3 tests&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="border-color:#D97757;display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;7&lt;/div&gt;&lt;div style="flex:1;"&gt;&lt;div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;AccountingProvider Interface + QBO OAuth&lt;/div&gt;&lt;span style="font-size:9px;background:#D97757;color:white;padding:1px 5px;border-radius:3px;"&gt;KEY&lt;/span&gt;&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;Interface · QBO + CSV implementations · OAuth connect/callback routes&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;lib/providers/types.ts&lt;/span&gt;&lt;span class="plan-chip"&gt;lib/providers/qbo.ts&lt;/span&gt;&lt;span class="plan-chip plan-chip-green"&gt;2 tests&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="border-color:#D97757;display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;8&lt;/div&gt;&lt;div style="flex:1;"&gt;&lt;div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Ingest API&lt;/div&gt;&lt;span style="font-size:9px;background:#D97757;color:white;padding:1px 5px;border-radius:3px;"&gt;KEY&lt;/span&gt;&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;Single route handles QBO pull + CSV upload — same output either way&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;api/jobs/[id]/ingest/route.ts&lt;/span&gt;&lt;span class="plan-chip plan-chip-green"&gt;2 tests&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;9&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Stripe Checkout + Webhook&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;Checkout session · webhook → job RECEIVED · fires Inngest event&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;src/lib/stripe.ts&lt;/span&gt;&lt;span class="plan-chip"&gt;api/jobs/[id]/checkout&lt;/span&gt;&lt;span class="plan-chip"&gt;api/webhooks/stripe&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-  &lt;div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"&gt;&lt;div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;"&gt;10&lt;/div&gt;&lt;div&gt;&lt;div style="font-size:12px;font-weight:600;color:#d1cfc5;"&gt;Client Portal UI&lt;/div&gt;&lt;div style="font-size:11px;color:#6b6860;margin-top:1px;"&gt;Jobs list · New job (connect QBO or upload CSV) · Job status page&lt;/div&gt;&lt;div style="margin-top:5px;"&gt;&lt;span class="plan-chip"&gt;app/(dashboard)/layout.tsx&lt;/span&gt;&lt;span class="plan-chip"&gt;jobs/page.tsx&lt;/span&gt;&lt;span class="plan-chip"&gt;jobs/new/page.tsx&lt;/span&gt;&lt;span class="plan-chip"&gt;jobs/[id]/page.tsx&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-
-&lt;div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center;"&gt;
-  &lt;div style="background:#222120;border-radius:8px;padding:10px;"&gt;&lt;div style="font-size:22px;font-weight:700;color:#D97757;"&gt;20&lt;/div&gt;&lt;div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.05em;"&gt;Tests&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border-radius:8px;padding:10px;"&gt;&lt;div style="font-size:22px;font-weight:700;color:#D97757;"&gt;10&lt;/div&gt;&lt;div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.05em;"&gt;Tasks&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-### Plan 2 — AI Processing Pipeline &amp; Reviewer Dashboard
-
-&lt;div class="dv-wrap" id="plan2"&gt;
-&lt;h2&gt;Plan 2 — AI Processing Pipeline &amp; Reviewer Dashboard&lt;/h2&gt;
-&lt;p class="subtitle"&gt;Status: not yet written · depends on Plan 1&lt;/p&gt;
-&lt;p style="font-size:12px;color:#9e9c94;margin:0 0 12px;"&gt;Builds the Inngest-powered pipeline that runs after payment. Each stage is a durable background function. Adds the internal reviewer dashboard for flag resolution and batch approval.&lt;/p&gt;
-&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"&gt;
-  &lt;div style="background:#222120;border-radius:8px;padding:12px;"&gt;&lt;div class="label" style="color:#D97757;margin-bottom:6px;"&gt;AI PIPELINE (Inngest functions)&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;line-height:2;"&gt;compile-vendor-list&lt;br&gt;apply-exclusion-rules&lt;br&gt;map-form-types&lt;br&gt;identify-missing-w9s&lt;br&gt;flag-exceptions&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border-radius:8px;padding:12px;"&gt;&lt;div class="label" style="color:#D97757;margin-bottom:6px;"&gt;REVIEWER DASHBOARD&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;line-height:2;"&gt;Job queue view&lt;br&gt;Flag resolution UI&lt;br&gt;Vendor list review&lt;br&gt;Batch approval flow&lt;br&gt;Client message composer&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-### Plan 3 — W-9 Chase, PDFs &amp; Delivery
-
-&lt;div class="dv-wrap" id="plan3"&gt;
-&lt;h2&gt;Plan 3 — W-9 Chase, PDFs &amp; Delivery&lt;/h2&gt;
-&lt;p class="subtitle"&gt;Status: not yet written · depends on Plan 2&lt;/p&gt;
-&lt;p style="font-size:12px;color:#9e9c94;margin:0 0 12px;"&gt;Completes the end-to-end job: automated W-9 email outreach (Resend), Handlebars + Puppeteer PDF generation, portal download for client, email delivery to contractors. Lays groundwork for v2 phone outreach (Twilio) and fax delivery (Fax.plus).&lt;/p&gt;
-&lt;div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"&gt;
-  &lt;div style="background:#222120;border-radius:8px;padding:12px;"&gt;&lt;div class="label" style="color:#D97757;margin-bottom:6px;"&gt;W-9 CHASE (Resend)&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;line-height:2;"&gt;Identify missing W-9s&lt;br&gt;Templated email outreach&lt;br&gt;Response tracking&lt;br&gt;Reminder cadence&lt;br&gt;v2: Twilio phone calls&lt;/div&gt;&lt;/div&gt;
-  &lt;div style="background:#222120;border-radius:8px;padding:12px;"&gt;&lt;div class="label" style="color:#D97757;margin-bottom:6px;"&gt;PDF GENERATION &amp; DELIVERY&lt;/div&gt;&lt;div style="font-size:11.5px;color:#9e9c94;line-height:2;"&gt;Handlebars 1099 templates&lt;br&gt;Puppeteer → PDF&lt;br&gt;Portal download for client&lt;br&gt;Contractor copies by email&lt;br&gt;v2: Fax.plus delivery&lt;/div&gt;&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-
-## Action Items
-
-- [x] Have tax domain expert (Will Rosler) review agent model and 1099 rules
-- [x] Move to implementation planning — Plan 1 written (10 tasks, 20 tests)
-- [x] Decide tech stack — Next.js 15, Prisma + Neon, Clerk, Stripe, Inngest, Sentry, Resend
-- [x] Decide data ingestion strategy — QBO OAuth + CSV with AccountingProvider interface
-- [ ] Validate pricing ($299/$699) with 2–3 potential customers before launch
-- [ ] Research IRS FIRE system requirements for e-filing authorization
-- [ ] Determine legal/liability structure for an agency filing on behalf of clients
-- [ ] Define go-to-market strategy for acquiring first 5 customers
-- [ ] Execute Plan 1 — Foundation &amp; Client Portal
-- [ ] Write and execute Plan 2 — AI Processing Pipeline &amp; Reviewer Dashboard
-- [ ] Write and execute Plan 3 — W-9 Chase, PDFs &amp; Delivery
-</pre>
-        </div>
-      </div>
+      <div id="claude-context" style="display:none">I'm picking up from a previous Claude Code session.
+
+**Session:** AI Agency Business Concept — 1099 Processing MVP
+**Note:** https://notes.thethoughtdungeon.com/2026-05-22-b8ddb520
+**Date:** 2026-05-22
+
+### What we worked on
+We designed an AI-powered managed service agency starting with 1099 contractor tax processing as the validation wedge. The core thesis: charge service-level pricing ($299–$699/season) while delivering at software-level costs by replacing professional services headcount with AI agents. A tax domain expert (Will Rosler) reviewed the model and clarified where the real complexity lives — not in the filing itself, but in building the correct qualified vendor list from raw QuickBooks data. This upstream work (cash-basis filtering, CC exclusion, entity-type classification, $600 threshold) is what the AI earns its margin on. The session concluded with a full tech stack decision and a 3-plan implementation roadmap, with Plan 1 (Foundation &amp; Client Portal) fully specified at 10 tasks and 20 tests.
+
+### Key decisions and why
+- **Managed service, not SaaS**: Positions as an agency replacing an accounting firm, not competing with DIY tools like Track1099. Clients pay per engagement per season — how they already think about outsourcing. This also means the AI quality bar is "good enough for a human to sign off on" rather than "perfect enough for fully autonomous filing."
+- **1099 processing as the wedge**: Time-boxed (tax season), repeatable, high-stress for clients, binary output (filed/not filed), clear fit for AI. Validated demand can expand to other service lines later.
+- **QBO OAuth added to MVP scope**: Raw QBO vendor reports are not cash-basis-aware and don't exclude CC payments. Pulling raw Purchase and BillPayment transactions directly from the QBO API lets the agent apply correct rules. CSV upload is the fallback for non-QBO users.
+- **Provider-agnostic AccountingProvider interface**: QBO and CSV both implement the same contract — Xero/FreshBooks/Wave can be added later with no downstream changes.
+- **IRS e-filing deferred**: Do first filings manually via IRS FIRE to validate willingness to pay before building the e-file integration.
+- **Inngest for the pipeline**: Durable background functions with built-in retry and observability. Each processing stage is one function. No persistent worker needed on Vercel.
+- **Upfront Stripe payment at submission**: Filters uncommitted clients, clean cash flow, avoids processing work for non-paying users.
+
+### What was explored but not pursued
+- **SaaS product model**: Ruled out — puts the product in direct competition with existing filing tools at the low end, without the differentiation of actually doing the work. The service model is what creates the pricing gap between DIY software ($50–150) and an accounting firm ($1,500–5,000+).
+- **Phone outreach (Twilio) in MVP**: Deferred to v2. Email-only W-9 chase is sufficient for validation and avoids the complexity of phone workflows before finding product-market fit.
+- **State filing in MVP**: Federal only. State requirements vary significantly and add scope without improving the core validation signal.
+- **IRS TIN matching API**: Format validation only in v1. Full TIN matching requires FIRE enrollment and is not needed to complete a manual first season.
+
+### Current state
+Plan 1 is fully written: 10 tasks covering scaffolding, Prisma schema (User, Job, Payment, Vendor, Connection, Message), Clerk auth, pricing utilities, CSV parsing with 1099 business logic (7 tests), Job API, AccountingProvider interface + QBO OAuth implementation, Ingest API, Stripe checkout + webhook, and the client portal UI. 20 tests are defined. Plans 2 (AI processing pipeline + internal reviewer dashboard) and 3 (W-9 chase, PDF generation, delivery) are outlined in the note but not yet written as full task lists. No code has been committed — the session ended at the planning stage.
+
+### Good places to pick up
+- Execute Plan 1 starting with tasks 1–5 (scaffold through CSV parsing tests) as the first working checkpoint with passing tests
+- Write Plan 2 in detail — the Inngest pipeline functions and reviewer dashboard are the core AI value; this plan needs the most design thought
+- Before writing code: validate the $299/$699 pricing with 2–3 potential customers — the whole model depends on willingness to pay at that price point</div>
     </main>
 
     <footer class="note-footer">
-      <span>Generated Sat, 23 May 2026 14:36:35 GMT</span>
+      <span>Generated Sat, 23 May 2026 19:49:12 GMT</span>
       <span><a href="https://notes.thethoughtdungeon.com">notes.thethoughtdungeon.com</a></span>
     </footer>
   </div>
 
   <script>
-    var showingHtml = true;
-
-    function toggleView() {
-      showingHtml = !showingHtml;
-      document.getElementById('html-view').style.display = showingHtml ? 'block' : 'none';
-      document.getElementById('md-view').style.display   = showingHtml ? 'none'  : 'block';
-      document.getElementById('btn-toggle').textContent  = showingHtml ? 'show markdown' : 'show rendered';
-      document.getElementById('btn-toggle').classList.toggle('active', !showingHtml);
-    }
-
-    function copyMarkdown() {
-      var raw = document.getElementById('md-raw').textContent;
-      var btn = document.getElementById('btn-copy');
-      navigator.clipboard.writeText(raw).then(function() {
+    function copyForClaude() {
+      var ctx = document.getElementById('claude-context').textContent;
+      var btn = document.getElementById('btn-claude');
+      navigator.clipboard.writeText(ctx).then(function() {
         btn.textContent = 'copied!';
         btn.classList.add('copied-flash');
         setTimeout(function() {
-          btn.textContent = 'copy markdown';
+          btn.textContent = 'copy for Claude';
           btn.classList.remove('copied-flash');
         }, 2000);
       }).catch(function() {
-        // Fallback for older browsers
         var ta = document.createElement('textarea');
-        ta.value = raw;
+        ta.value = ctx;
         ta.style.position = 'fixed';
         ta.style.opacity = '0';
         document.body.appendChild(ta);
@@ -1120,7 +663,7 @@ Three sequential plans. Each produces working, testable software on its own.
         document.execCommand('copy');
         document.body.removeChild(ta);
         btn.textContent = 'copied!';
-        setTimeout(function() { btn.textContent = 'copy markdown'; }, 2000);
+        setTimeout(function() { btn.textContent = 'copy for Claude'; }, 2000);
       });
     }
   </script>
