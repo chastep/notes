@@ -280,19 +280,115 @@
         <h2>AI Agency Business Concept — 1099 Processing MVP</h2>
 <script>
 (function() {
+  var SIDEBAR_WIDTH = 220;
+  var BREAKPOINT = 768;
+  var sidebar = null;
+  var shell = null;
+
+  function isDesktop() { return window.innerWidth >= BREAKPOINT; }
+
+  function applyDesktop() {
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100%';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100%';
+    document.body.style.margin = '0';
+    if (sidebar) sidebar.style.display = 'flex';
+    if (shell) shell.style.cssText = 'position:fixed;left:' + SIDEBAR_WIDTH + 'px;right:0;top:0;bottom:0;overflow-y:auto;max-width:none;margin:0;padding:2rem 3rem 4rem;box-sizing:border-box;';
+  }
+
+  function applyMobile() {
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    document.body.style.margin = '';
+    if (sidebar) sidebar.style.display = 'none';
+    if (shell) shell.style.cssText = '';
+  }
+
   function buildLayout() {
     var headings = document.querySelectorAll('.prose h2, .prose h3');
     if (!headings.length) return;
-<p>    // Freeze body scroll — content pane will scroll instead     document.documentElement.style.overflow = 'hidden';     document.documentElement.style.height = '100%';     document.body.style.overflow = 'hidden';     document.body.style.height = '100%';     document.body.style.margin = '0';</p>
-<p>    // Fix the shell as the scrollable right pane     var shell = document.querySelector('.shell');     if (shell) {       shell.style.cssText = 'position:fixed;left:220px;right:0;top:0;bottom:0;overflow-y:auto;max-width:none;margin:0;padding:2rem 3rem 4rem;box-sizing:border-box;';     }</p>
-<p>    // Build left sidebar     var sidebar = document.createElement('nav');     sidebar.id = 'sidenav';     sidebar.style.cssText = 'position:fixed;top:0;left:0;width:220px;height:100vh;overflow:hidden;background:#1a1918;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;z-index:200;';</p>
-<p>    // Site title area     var titleArea = document.createElement('div');     titleArea.style.cssText = 'padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;';     var siteTitle = document.createElement('div');     siteTitle.textContent = 'AI Agency';     siteTitle.style.cssText = 'font-size:13px;font-weight:700;color:#d1cfc5;letter-spacing:0.01em;';     var siteSub = document.createElement('div');     siteSub.textContent = '1099 Processing MVP';     siteSub.style.cssText = 'font-size:10px;color:#6b6860;margin-top:2px;';     titleArea.appendChild(siteTitle);     titleArea.appendChild(siteSub);     sidebar.appendChild(titleArea);</p>
-<p>    // Nav label     var navLabel = document.createElement('div');     navLabel.textContent = 'ON THIS PAGE';     navLabel.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:#6b6860;font-family:monospace;padding:14px 16px 6px;flex-shrink:0;';     sidebar.appendChild(navLabel);</p>
-<p>    // Links container — fills remaining height, no scroll     var linksWrap = document.createElement('div');     linksWrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;';     sidebar.appendChild(linksWrap);</p>
-<p>    var links = [];     headings.forEach(function(h) {       if (!h.id) { h.id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }       var isH3 = h.tagName === 'H3';       var a = document.createElement('a');       a.href = '#' + h.id;       a.textContent = h.textContent;       a.dataset.target = h.id;       a.style.cssText = 'display:block;padding:' + (isH3 ? '2px 16px 2px 28px' : '4px 16px') + ';font-size:' + (isH3 ? '11px' : '12px') + ';color:' + (isH3 ? '#555' : '#9e9c94') + ';text-decoration:none;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.1s;border-left:2px solid transparent;';       a.addEventListener('mouseenter', function() { if (!this.classList.contains('active')) this.style.color = '#D97757'; });       a.addEventListener('mouseleave', function() { if (!this.classList.contains('active')) this.style.color = isH3 ? '#555' : '#9e9c94'; });       a.addEventListener('click', function(e) {         e.preventDefault();         var target = document.getElementById(this.dataset.target);         if (target &amp;&amp; shell) {           shell.scrollTo({ top: target.offsetTop - 28, behavior: 'smooth' });         }       });       linksWrap.appendChild(a);       links.push({ el: a, headingId: h.id, isH3: isH3 });     });</p>
-<p>    document.body.appendChild(sidebar);</p>
-<p>    // Active link tracking on content scroll     function updateActive() {       if (!shell) return;       var scrollTop = shell.scrollTop + 60;       var current = null;       headings.forEach(function(h) {         if (h.offsetTop &lt;= scrollTop) current = h.id;       });       links.forEach(function(link) {         var isActive = link.headingId === current;         link.el.style.color = isActive ? '#D97757' : (link.isH3 ? '#555' : '#9e9c94');         link.el.style.borderLeftColor = isActive ? '#D97757' : 'transparent';         link.el.style.fontWeight = isActive ? '600' : 'normal';       });     }     if (shell) shell.addEventListener('scroll', updateActive);     updateActive();   }</p>
-<p>  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', buildLayout); } else { buildLayout(); } })(); &lt;/script&gt;</p>
+
+    shell = document.querySelector('.shell');
+
+    sidebar = document.createElement('nav');
+    sidebar.id = 'sidenav';
+    sidebar.style.cssText = 'position:fixed;top:0;left:0;width:' + SIDEBAR_WIDTH + 'px;height:100vh;overflow:hidden;background:#1a1918;border-right:1px solid rgba(255,255,255,0.07);flex-direction:column;z-index:200;display:none;';
+
+    var titleArea = document.createElement('div');
+    titleArea.style.cssText = 'padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;';
+    var siteTitle = document.createElement('div');
+    siteTitle.textContent = 'AI Agency';
+    siteTitle.style.cssText = 'font-size:13px;font-weight:700;color:#d1cfc5;letter-spacing:0.01em;';
+    var siteSub = document.createElement('div');
+    siteSub.textContent = '1099 Processing MVP';
+    siteSub.style.cssText = 'font-size:10px;color:#6b6860;margin-top:2px;';
+    titleArea.appendChild(siteTitle);
+    titleArea.appendChild(siteSub);
+    sidebar.appendChild(titleArea);
+
+    var navLabel = document.createElement('div');
+    navLabel.textContent = 'ON THIS PAGE';
+    navLabel.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:#6b6860;font-family:monospace;padding:14px 16px 6px;flex-shrink:0;';
+    sidebar.appendChild(navLabel);
+
+    var linksWrap = document.createElement('div');
+    linksWrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;';
+    sidebar.appendChild(linksWrap);
+
+    var links = [];
+    headings.forEach(function(h) {
+      if (!h.id) { h.id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+      var isH3 = h.tagName === 'H3';
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      a.dataset.target = h.id;
+      a.style.cssText = 'display:block;padding:' + (isH3 ? '2px 16px 2px 28px' : '4px 16px') + ';font-size:' + (isH3 ? '11px' : '12px') + ';color:' + (isH3 ? '#555' : '#9e9c94') + ';text-decoration:none;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.1s;border-left:2px solid transparent;';
+      a.addEventListener('mouseenter', function() { if (!this.classList.contains('active')) this.style.color = '#D97757'; });
+      a.addEventListener('mouseleave', function() { if (!this.classList.contains('active')) this.style.color = isH3 ? '#555' : '#9e9c94'; });
+      a.addEventListener('click', function(e) {
+        var scrollTarget = document.getElementById(this.dataset.target);
+        if (!scrollTarget) return;
+        if (isDesktop() && shell) {
+          e.preventDefault();
+          shell.scrollTo({ top: scrollTarget.offsetTop - 28, behavior: 'smooth' });
+        }
+      });
+      linksWrap.appendChild(a);
+      links.push({ el: a, headingId: h.id, isH3: isH3 });
+    });
+
+    document.body.appendChild(sidebar);
+
+    function updateActive() {
+      var scrollTop = (isDesktop() && shell ? shell.scrollTop : window.scrollY) + 60;
+      var current = null;
+      headings.forEach(function(h) { if (h.offsetTop <= scrollTop) current = h.id; });
+      links.forEach(function(link) {
+        var active = link.headingId === current;
+        link.el.style.color = active ? '#D97757' : (link.isH3 ? '#555' : '#9e9c94');
+        link.el.style.borderLeftColor = active ? '#D97757' : 'transparent';
+        link.el.style.fontWeight = active ? '600' : 'normal';
+      });
+    }
+
+    if (shell) shell.addEventListener('scroll', updateActive);
+    window.addEventListener('scroll', updateActive);
+
+    function onResize() {
+      if (isDesktop()) { applyDesktop(); } else { applyMobile(); }
+      updateActive();
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
+  }
+
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', buildLayout); } else { buildLayout(); }
+})();
+</script>
 <style>
 .dv-wrap { background: #1a1918; border-radius: 12px; padding: 20px; margin: 16px 0; font-family: system-ui, sans-serif; border: 1px solid rgba(255,255,255,0.07); }
 .dv-wrap .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-weight: 600; }
@@ -303,6 +399,12 @@
 .plan-panel { background: #222120; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 14px; }
 .plan-chip { font-size: 11px; background: #2a2927; color: #9e9c94; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px 2px 2px 0; }
 .plan-chip-green { color: #7eb87e; }
+@media (max-width: 767px) {
+  .dv-wrap { padding: 14px; }
+  [style*="grid-template-columns:1fr 1fr"] { display: flex !important; flex-direction: column !important; }
+  [style*="grid-template-columns:1fr 1fr 1fr"] { display: flex !important; flex-direction: column !important; }
+  [style*="grid-template-columns:148px"] { grid-template-columns: 1fr !important; }
+}
 </style>
 <h2>Summary</h2>
 <p>Chase and a friend were discussing a Y Combinator-inspired idea: build an AI agency that replaces professional services headcount with AI agents, starting with accounting and finance. Through brainstorming, the concept crystallized into a <strong>managed service</strong> model — not SaaS — targeting midsized companies for 1099 processing. The core insight: charge service-level prices ($299–$699/season) while delivering at software-level costs.</p>
@@ -527,7 +629,7 @@
 title: "AI Agency Business Concept — 1099 Processing MVP"
 uuid: 2026-05-22-b8ddb520
 date: 2026-05-22
-published_at: 2026-05-23T14:26:41.561Z
+published_at: 2026-05-23T14:36:35.331Z
 description: "Designing and planning an AI-powered managed service agency for 1099 processing — concept, domain context, tech stack decisions, and a full 3-plan implementation roadmap."
 ---
 
@@ -535,29 +637,43 @@ description: "Designing and planning an AI-powered managed service agency for 10
 
 &lt;script&gt;
 (function() {
-  function buildLayout() {
-    var headings = document.querySelectorAll('.prose h2, .prose h3');
-    if (!headings.length) return;
+  var SIDEBAR_WIDTH = 220;
+  var BREAKPOINT = 768;
+  var sidebar = null;
+  var shell = null;
 
-    // Freeze body scroll — content pane will scroll instead
+  function isDesktop() { return window.innerWidth &gt;= BREAKPOINT; }
+
+  function applyDesktop() {
     document.documentElement.style.overflow = 'hidden';
     document.documentElement.style.height = '100%';
     document.body.style.overflow = 'hidden';
     document.body.style.height = '100%';
     document.body.style.margin = '0';
+    if (sidebar) sidebar.style.display = 'flex';
+    if (shell) shell.style.cssText = 'position:fixed;left:' + SIDEBAR_WIDTH + 'px;right:0;top:0;bottom:0;overflow-y:auto;max-width:none;margin:0;padding:2rem 3rem 4rem;box-sizing:border-box;';
+  }
 
-    // Fix the shell as the scrollable right pane
-    var shell = document.querySelector('.shell');
-    if (shell) {
-      shell.style.cssText = 'position:fixed;left:220px;right:0;top:0;bottom:0;overflow-y:auto;max-width:none;margin:0;padding:2rem 3rem 4rem;box-sizing:border-box;';
-    }
+  function applyMobile() {
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    document.body.style.margin = '';
+    if (sidebar) sidebar.style.display = 'none';
+    if (shell) shell.style.cssText = '';
+  }
 
-    // Build left sidebar
-    var sidebar = document.createElement('nav');
+  function buildLayout() {
+    var headings = document.querySelectorAll('.prose h2, .prose h3');
+    if (!headings.length) return;
+
+    shell = document.querySelector('.shell');
+
+    sidebar = document.createElement('nav');
     sidebar.id = 'sidenav';
-    sidebar.style.cssText = 'position:fixed;top:0;left:0;width:220px;height:100vh;overflow:hidden;background:#1a1918;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;z-index:200;';
+    sidebar.style.cssText = 'position:fixed;top:0;left:0;width:' + SIDEBAR_WIDTH + 'px;height:100vh;overflow:hidden;background:#1a1918;border-right:1px solid rgba(255,255,255,0.07);flex-direction:column;z-index:200;display:none;';
 
-    // Site title area
     var titleArea = document.createElement('div');
     titleArea.style.cssText = 'padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;';
     var siteTitle = document.createElement('div');
@@ -570,15 +686,13 @@ description: "Designing and planning an AI-powered managed service agency for 10
     titleArea.appendChild(siteSub);
     sidebar.appendChild(titleArea);
 
-    // Nav label
     var navLabel = document.createElement('div');
     navLabel.textContent = 'ON THIS PAGE';
     navLabel.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:#6b6860;font-family:monospace;padding:14px 16px 6px;flex-shrink:0;';
     sidebar.appendChild(navLabel);
 
-    // Links container — fills remaining height, no scroll
     var linksWrap = document.createElement('div');
-    linksWrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;';
+    linksWrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;';
     sidebar.appendChild(linksWrap);
 
     var links = [];
@@ -593,10 +707,11 @@ description: "Designing and planning an AI-powered managed service agency for 10
       a.addEventListener('mouseenter', function() { if (!this.classList.contains('active')) this.style.color = '#D97757'; });
       a.addEventListener('mouseleave', function() { if (!this.classList.contains('active')) this.style.color = isH3 ? '#555' : '#9e9c94'; });
       a.addEventListener('click', function(e) {
-        e.preventDefault();
-        var target = document.getElementById(this.dataset.target);
-        if (target &amp;&amp; shell) {
-          shell.scrollTo({ top: target.offsetTop - 28, behavior: 'smooth' });
+        var scrollTarget = document.getElementById(this.dataset.target);
+        if (!scrollTarget) return;
+        if (isDesktop() &amp;&amp; shell) {
+          e.preventDefault();
+          shell.scrollTo({ top: scrollTarget.offsetTop - 28, behavior: 'smooth' });
         }
       });
       linksWrap.appendChild(a);
@@ -605,23 +720,27 @@ description: "Designing and planning an AI-powered managed service agency for 10
 
     document.body.appendChild(sidebar);
 
-    // Active link tracking on content scroll
     function updateActive() {
-      if (!shell) return;
-      var scrollTop = shell.scrollTop + 60;
+      var scrollTop = (isDesktop() &amp;&amp; shell ? shell.scrollTop : window.scrollY) + 60;
       var current = null;
-      headings.forEach(function(h) {
-        if (h.offsetTop &lt;= scrollTop) current = h.id;
-      });
+      headings.forEach(function(h) { if (h.offsetTop &lt;= scrollTop) current = h.id; });
       links.forEach(function(link) {
-        var isActive = link.headingId === current;
-        link.el.style.color = isActive ? '#D97757' : (link.isH3 ? '#555' : '#9e9c94');
-        link.el.style.borderLeftColor = isActive ? '#D97757' : 'transparent';
-        link.el.style.fontWeight = isActive ? '600' : 'normal';
+        var active = link.headingId === current;
+        link.el.style.color = active ? '#D97757' : (link.isH3 ? '#555' : '#9e9c94');
+        link.el.style.borderLeftColor = active ? '#D97757' : 'transparent';
+        link.el.style.fontWeight = active ? '600' : 'normal';
       });
     }
+
     if (shell) shell.addEventListener('scroll', updateActive);
-    updateActive();
+    window.addEventListener('scroll', updateActive);
+
+    function onResize() {
+      if (isDesktop()) { applyDesktop(); } else { applyMobile(); }
+      updateActive();
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
   }
 
   if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', buildLayout); } else { buildLayout(); }
@@ -638,6 +757,12 @@ description: "Designing and planning an AI-powered managed service agency for 10
 .plan-panel { background: #222120; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 14px; }
 .plan-chip { font-size: 11px; background: #2a2927; color: #9e9c94; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px 2px 2px 0; }
 .plan-chip-green { color: #7eb87e; }
+@media (max-width: 767px) {
+  .dv-wrap { padding: 14px; }
+  [style*="grid-template-columns:1fr 1fr"] { display: flex !important; flex-direction: column !important; }
+  [style*="grid-template-columns:1fr 1fr 1fr"] { display: flex !important; flex-direction: column !important; }
+  [style*="grid-template-columns:148px"] { grid-template-columns: 1fr !important; }
+}
 &lt;/style&gt;
 
 ## Summary
@@ -957,7 +1082,7 @@ Three sequential plans. Each produces working, testable software on its own.
     </main>
 
     <footer class="note-footer">
-      <span>Generated Sat, 23 May 2026 14:26:41 GMT</span>
+      <span>Generated Sat, 23 May 2026 14:36:35 GMT</span>
       <span><a href="https://notes.thethoughtdungeon.com">notes.thethoughtdungeon.com</a></span>
     </footer>
   </div>
