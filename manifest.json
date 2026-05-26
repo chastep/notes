@@ -3,7 +3,7 @@
     "uuid": "2026-05-26-73fb2a62",
     "title": "Sterling → BookMule Gap Analysis & Remaining Build Plan",
     "date": "2026-05-26",
-    "description": "Full audit of what Sterling has built vs. what BookMule ships, with a prioritized list of remaining work organized by unlock value.",
+    "description": "Full audit of what Sterling has built vs. what BookMule ships, with a prioritized list of remaining work including Stripe wiring and plan enforcement.",
     "url": "https://notes.thethoughtdungeon.com/2026-05-26-73fb2a62"
   },
   {
