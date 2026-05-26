@@ -6,7 +6,7 @@
   <meta name="note-uuid" content="2026-05-22-b8ddb520">
   <meta name="note-title" content="AI Agency Business Concept — 1099 Processing MVP">
   <meta name="note-date" content="May 26, 2026">
-  <meta name="note-description" content="From managed-service AI agency concept to accountant-facing SaaS with a $4/form 1099 add-on — full arc from idea through current build state and four remaining implementation plans.">
+  <meta name="note-description" content="Designing and planning an AI-powered managed service agency for 1099 processing — concept, domain context, tech stack decisions, full implementation roadmap (Plans 1–7).">
   <title>AI Agency Business Concept — 1099 Processing MVP — session notes</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -257,32 +257,386 @@
 
     <main>
       <div id="html-view" class="prose">
-        <h2>Sterling — From AI Agency Concept to Accountant SaaS</h2>
+        <h2>AI Agency Business Concept — 1099 Processing MVP</h2>
+<script>
+(function() {
+  var SIDEBAR_WIDTH = 220;
+  var BREAKPOINT = 768;
+  var sidebar = null;
+  var shell = null;
+
+  function isDesktop() { return window.innerWidth >= BREAKPOINT; }
+
+  function applyDesktop() {
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100%';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100%';
+    document.body.style.margin = '0';
+    if (sidebar) sidebar.style.display = 'flex';
+    if (shell) shell.style.cssText = 'position:fixed;left:' + SIDEBAR_WIDTH + 'px;right:0;top:0;bottom:0;overflow-y:auto;max-width:none;margin:0;padding:2rem 3rem 4rem;box-sizing:border-box;';
+  }
+
+  function applyMobile() {
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.body.style.overflow = '';
+    document.body.style.height = '';
+    document.body.style.margin = '';
+    if (sidebar) sidebar.style.display = 'none';
+    if (shell) shell.style.cssText = '';
+  }
+
+  function buildLayout() {
+    var headings = document.querySelectorAll('.prose h2, .prose h3');
+    if (!headings.length) return;
+
+    shell = document.querySelector('.shell');
+
+    sidebar = document.createElement('nav');
+    sidebar.id = 'sidenav';
+    sidebar.style.cssText = 'position:fixed;top:0;left:0;width:' + SIDEBAR_WIDTH + 'px;height:100vh;overflow:hidden;background:#1a1918;border-right:1px solid rgba(255,255,255,0.07);flex-direction:column;z-index:200;display:none;';
+
+    var titleArea = document.createElement('div');
+    titleArea.style.cssText = 'padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;';
+    var siteTitle = document.createElement('div');
+    siteTitle.textContent = 'AI Agency';
+    siteTitle.style.cssText = 'font-size:13px;font-weight:700;color:#d1cfc5;letter-spacing:0.01em;';
+    var siteSub = document.createElement('div');
+    siteSub.textContent = '1099 Processing MVP';
+    siteSub.style.cssText = 'font-size:10px;color:#6b6860;margin-top:2px;';
+    titleArea.appendChild(siteTitle);
+    titleArea.appendChild(siteSub);
+    sidebar.appendChild(titleArea);
+
+    var navLabel = document.createElement('div');
+    navLabel.textContent = 'ON THIS PAGE';
+    navLabel.style.cssText = 'font-size:9px;letter-spacing:0.1em;color:#6b6860;font-family:monospace;padding:14px 16px 6px;flex-shrink:0;';
+    sidebar.appendChild(navLabel);
+
+    var linksWrap = document.createElement('div');
+    linksWrap.style.cssText = 'flex:1;overflow:hidden;display:flex;flex-direction:column;';
+    sidebar.appendChild(linksWrap);
+
+    var links = [];
+    headings.forEach(function(h) {
+      if (!h.id) { h.id = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+      var isH3 = h.tagName === 'H3';
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = h.textContent;
+      a.dataset.target = h.id;
+      a.style.cssText = 'display:block;padding:' + (isH3 ? '2px 16px 2px 28px' : '4px 16px') + ';font-size:' + (isH3 ? '11px' : '12px') + ';color:' + (isH3 ? '#555' : '#9e9c94') + ';text-decoration:none;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.1s;border-left:2px solid transparent;';
+      a.addEventListener('mouseenter', function() { if (!this.classList.contains('active')) this.style.color = '#D97757'; });
+      a.addEventListener('mouseleave', function() { if (!this.classList.contains('active')) this.style.color = isH3 ? '#555' : '#9e9c94'; });
+      a.addEventListener('click', function(e) {
+        var scrollTarget = document.getElementById(this.dataset.target);
+        if (!scrollTarget) return;
+        if (isDesktop() && shell) {
+          e.preventDefault();
+          shell.scrollTo({ top: scrollTarget.offsetTop - 28, behavior: 'smooth' });
+        }
+      });
+      linksWrap.appendChild(a);
+      links.push({ el: a, headingId: h.id, isH3: isH3 });
+    });
+
+    document.body.appendChild(sidebar);
+
+    function updateActive() {
+      var scrollTop = (isDesktop() && shell ? shell.scrollTop : window.scrollY) + 60;
+      var current = null;
+      headings.forEach(function(h) { if (h.offsetTop <= scrollTop) current = h.id; });
+      links.forEach(function(link) {
+        var active = link.headingId === current;
+        link.el.style.color = active ? '#D97757' : (link.isH3 ? '#555' : '#9e9c94');
+        link.el.style.borderLeftColor = active ? '#D97757' : 'transparent';
+        link.el.style.fontWeight = active ? '600' : 'normal';
+      });
+    }
+
+    if (shell) shell.addEventListener('scroll', updateActive);
+    window.addEventListener('scroll', updateActive);
+
+    function onResize() {
+      if (isDesktop()) { applyDesktop(); } else { applyMobile(); }
+      updateActive();
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
+  }
+
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', buildLayout); } else { buildLayout(); }
+})();
+</script>
+<style>
+.dv-wrap { background: #1a1918; border-radius: 12px; padding: 20px; margin: 16px 0; font-family: system-ui, sans-serif; border: 1px solid rgba(255,255,255,0.07); }
+.dv-wrap .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #888; font-weight: 600; }
+.dv-wrap .subtitle { font-size: 14px; color: #aaa; margin: 4px 0 16px; }
+.dv-wrap h2 { color: #fff; font-size: 18px; margin: 0 0 4px; }
+.dv-wrap h3 { color: #eee; font-size: 14px; margin: 6px 0 4px; }
+.dv-wrap p { margin: 0; }
+.plan-panel { background: #222120; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 14px; }
+.plan-chip { font-size: 11px; background: #2a2927; color: #9e9c94; padding: 2px 8px; border-radius: 4px; display: inline-block; margin: 2px 2px 2px 0; }
+.plan-chip-green { color: #7eb87e; }
+.plan-chip-amber { color: #d97706; }
+@media (max-width: 767px) {
+  .dv-wrap { padding: 14px; }
+  [style*="grid-template-columns:1fr 1fr"] { display: flex !important; flex-direction: column !important; }
+  [style*="grid-template-columns:1fr 1fr 1fr"] { display: flex !important; flex-direction: column !important; }
+  [style*="grid-template-columns:148px"] { grid-template-columns: 1fr !important; }
+}
+</style>
 <h2>Summary</h2>
-<p>This project started as a Y Combinator-inspired idea: build an AI agency that replaces professional services headcount with AI agents, starting with 1099 contractor tax processing. Through domain review from Will Rosler (tax expert) and iterative design, the model evolved: the core product is now <strong>Sterling</strong> — a self-serve SaaS tool for accountants targeting solo CPAs and small bookkeeping firms with 50+ SMB clients. The 1099 Center is a $4/form AI-managed add-on rather than a standalone managed service. The core insight from the original concept survived: charge for vendor cleanup and canonicalization (where the real work is), bundle the filing. The codebase has shipped Plans 1–3 (QBO import/edit/delete/export, Stripe billing scaffolding, Clerk auth, history/audit). Four plans remain.</p>
-<h2>The Original Insight (still true)</h2>
-<p>A tax domain expert confirmed: the real complexity in 1099 processing isn't the filing — it's getting the correct vendor list first. QBO exports aren't cash-basis-aware, CC payments must be excluded, C-corps don't qualify, and the $2,000 threshold (2026, per OBBBA) applies to cash payments only. DIY filing tools (Track1099, Tax1099) expect clean data — Sterling produces the clean data. That's the moat.</p>
-<h2>Business Model</h2>
-<ul><li>FREE — 100 rows/month, 1 entity, 1 user</li><li>STARTER — $25/mo, unlimited rows, 1 entity, 3 users</li><li>MULTI_ENTITY — $79/mo, unlimited rows, 5 entities, 10 users</li></ul>
-<h2>What's Already Shipped</h2>
-<p>| Feature | Status | |---------|--------| | Import CSV → QBO (AI column mapping, Inngest, rerun) | ✅ Production-ready | | Mass-edit (account ID resolution, Line updates, QBO API) | ✅ Production-ready | | Mass-delete (void/hard, pre-delete snapshot) | ✅ Production-ready | | Export CSV (QBO query → filter → flatten → download) | ✅ Production-ready | | QBO OAuth (connect, callback, token storage) | ✅ Production-ready | | Stripe (checkout, portal, webhook — code exists) | ⚠️ Placeholder price IDs only | | Clerk auth + webhook | ✅ Production-ready | | History + audit log + operation detail + rerun | ✅ Production-ready | | Receipt scan | ⚠️ UI + stubs, no OCR wired | | 1099 Center (TaxJob model + UI) | ⚠️ No W-9 chase or filing |</p>
-<h2>Four Remaining Plans</h2>
-<h3>Plan 4 — Production Hardening <em>(next sprint)</em></h3>
-<p>Makes what's already built reliable and billable.</p>
-<ul><li><strong>QBO token refresh</strong> — <code>ensureFreshToken(entity)</code> helper in <code>src/lib/providers/qbo.ts</code>; call Intuit refresh endpoint when <code>tokenExpiresAt</code> is past; thread through all three Inngest functions</li><li><strong>Stripe real credentials</strong> — create Starter ($25/mo) + Multi-entity ($79/mo) products in Stripe dashboard; swap placeholder price IDs in env; test checkout → webhook → <code>workspace.plan</code> update end-to-end</li><li><strong>Schema migration</strong> — add <code>monthlyRowsUsed Int @default(0)</code> and <code>billingPeriodStart DateTime @default(now())</code> to <code>Workspace</code></li><li><strong>Row quota enforcement</strong> — <code>checkRowQuota</code> helper in <code>src/lib/pricing.ts</code>; FREE = 100 rows/mo; return 402 + <code>upgradeRequired: true</code> in all 4 submit routes</li><li><strong>Entity count enforcement</strong> — in QBO connect callback, check entity count vs plan limit (FREE/STARTER = 1, MULTI_ENTITY = 5); redirect to upgrade if at limit</li><li><strong><code>&lt;UpgradePrompt /&gt;</code></strong> — shared inline component shown when any gate returns 402</li><li><strong>Revert operations</strong> — <code>src/app/api/operations/[id]/revert/route.ts</code> + <code>src/inngest/functions/revert-operation.ts</code></li></ul>
-<h3>Plan 5 — 1099 Managed Service <em>($4/form AI-managed add-on)</em></h3>
-<p>Ships the primary V1 revenue mechanism.</p>
-<ul><li><strong>Vendor canonicalization engine</strong> — <code>src/lib/vendor-canonicalization.ts</code>: fuzzy match + embedding similarity + LLM review; <code>VendorAlias</code> model on <code>Entity</code>; confidence scoring (≥90% auto-accept, 70–89% accountant question, &lt;70% flag)</li><li><strong>W-9 chase</strong> — <code>src/app/api/1099/chase-w9/route.ts</code> via Resend; magic-link no-login intake at <code>src/app/(public)/w9/[token]/page.tsx</code></li><li><strong>TIN format validation</strong> — <code>src/lib/tin-validation.ts</code> (format only in V1; IRS TIN Matching API V2 after approval clears)</li><li><strong>1099-NEC PDF generation</strong> — <code>pdf-lib</code> per-vendor PDFs; IRS-spec layout</li><li><strong>IRS FIRE flat file</strong> — IRS Publication 1220 format; accountant downloads + uploads manually in V1; IRIS API in V2 (mandatory by Dec 31, 2026)</li><li><strong>Threshold logic</strong> — $2,000 for 2026 (OBBBA); multi-year back-filing (2024/2025/2026)</li><li><strong>Stripe per-form billing</strong> — <code>price<em>1099</em>form</code> one-time charge on <code>TaxJob</code> completion</li></ul>
+<p>Chase and a friend were discussing a Y Combinator-inspired idea: build an AI agency that replaces professional services headcount with AI agents, starting with accounting and finance. Through brainstorming, the concept crystallized into a <strong>managed service</strong> model — not SaaS — targeting midsized companies for 1099 processing. The core insight: charge service-level prices ($299–$699/season) while delivering at software-level costs.</p>
+<p>A tax domain expert (Will Rosler) reviewed the concept and added critical domain detail: the real complexity in 1099 processing isn't the filing itself — it's getting the correct vendor list in the first place. QBO exports aren't cash-basis-aware, CC payments must be excluded, C-corps don't qualify, and the $2,000 threshold (2026, per OBBBA) applies to cash payments only. These upstream cleanup steps are where the AI earns its keep.</p>
+<p>Plans 1–3 are now <strong>fully shipped</strong> as Sterling — a self-serve SaaS tool for accountants targeting solo CPAs and small bookkeeping firms with 50+ SMB clients. The 1099 Center is a $4/form AI-managed add-on. Plans 4–7 cover what's left to build.</p>
+<h2>Key Topics</h2>
+<ul><li>AI agency as managed service → evolved to accountant-facing SaaS (Sterling)</li><li>1099 processing as the initial service offering and validation wedge</li><li>QBO OAuth + CSV upload with provider-agnostic AccountingProvider interface</li><li>Client journey: Submit → Compile → Chase W-9s → Review → Clarify → File</li><li>Agent model: AI handles ~90% autonomously, human reviewer handles escalations</li><li>Three-tier SaaS pricing: FREE / STARTER $25/mo / MULTI_ENTITY $79/mo + $4/form 1099 add-on</li><li>Tech stack: Next.js 16, Prisma + Neon, Clerk, Stripe, Inngest, Resend</li><li>Vendor canonicalization as the moat — resolving name variants across QBO + bank feeds</li><li>Plans 4–7: production hardening → 1099 managed service → accountant platform → scale</li></ul>
+<h2>Decisions &amp; Insights</h2>
+<ul><li><strong>Pivot: accountant ICP over direct SMB</strong> — one accountant = 20–200 SMB clients; cleaner targeting, B2B sales motion, lower CAC</li><li><strong>SaaS + managed 1099 add-on</strong> — Sterling is self-serve; 1099 Center is $4/form AI-managed</li><li><strong>Vendor canonicalization is the moat</strong> — DIY filing tools expect clean data; Sterling produces it across QBO + bank feeds</li><li><strong>QBO OAuth in MVP</strong> — pull raw transactions directly from API; exports aren't cash-basis-aware</li><li><strong>Provider-agnostic AccountingProvider interface</strong> — QBO + CSV both implement same contract; Xero/FreshBooks added with no downstream changes</li><li><strong>Inngest for job queue</strong> — durable background functions for AI pipeline steps, no persistent worker needed on Vercel</li><li><strong>Plaid is V1, not V2</strong> — without bank feeds, canonicalization only has one source; becomes "a glorified Track1099"</li><li><strong>IRS e-filing manual in V1</strong> — FIRE flat file download + manual upload; IRIS API mandatory by Dec 31, 2026</li><li><strong>$2,000 threshold for 2026</strong> — OBBBA passed; earlier $600 references in docs are wrong for tax year 2026</li><li><strong>Validation signal</strong>: 5 paying companies complete a full job, 3 say they'd return next year</li></ul>
+<h2>Design Visuals</h2>
+<h3>Client Journey</h3>
+<div class="dv-wrap" id="design-client-journey">
+<h2>Client Journey</h2>
+<p class="subtitle">1099 Processing — end to end</p>
+<div style="display:flex;align-items:flex-start;gap:0;flex-wrap:nowrap;overflow-x:auto;">
+  <div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;">
+    <div style="width:44px;height:44px;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;">1</div>
+    <div style="width:2px;height:20px;background:#6366f1;opacity:0.3;"></div>
+    <div style="background:#222120;border:1px solid #6366f1;border-radius:10px;padding:12px;text-align:center;width:108px;">
+      <div class="label" style="color:#6366f1;">CLIENT</div>
+      <h3 style="margin:5px 0 3px;font-size:13px;">Submit</h3>
+      <p style="font-size:11px;color:#aaa;margin:0;">Connect QBO or upload CSV. Pay upfront via Stripe.</p>
+    </div>
+  </div>
+  <div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;">→</div>
+  <div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;">
+    <div style="width:44px;height:44px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;">2</div>
+    <div style="width:2px;height:20px;background:#8b5cf6;opacity:0.3;"></div>
+    <div style="background:#222120;border:1px solid #8b5cf6;border-radius:10px;padding:12px;text-align:center;width:108px;">
+      <div class="label" style="color:#8b5cf6;">AI AGENT</div>
+      <h3 style="margin:5px 0 3px;font-size:13px;">Compile</h3>
+      <p style="font-size:11px;color:#aaa;margin:0;">Cash-basis filter, CC exclusion, $2k threshold, form type mapping</p>
+    </div>
+  </div>
+  <div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;">→</div>
+  <div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;">
+    <div style="width:44px;height:44px;border-radius:50%;background:#a855f7;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;">3</div>
+    <div style="width:2px;height:20px;background:#a855f7;opacity:0.3;"></div>
+    <div style="background:#222120;border:1px solid #a855f7;border-radius:10px;padding:12px;text-align:center;width:108px;">
+      <div class="label" style="color:#a855f7;">AGENT</div>
+      <h3 style="margin:5px 0 3px;font-size:13px;">Chase W-9s</h3>
+      <p style="font-size:11px;color:#aaa;margin:0;">Automated email outreach to vendors missing W-9</p>
+    </div>
+  </div>
+  <div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;">→</div>
+  <div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;">
+    <div style="width:44px;height:44px;border-radius:50%;background:#ec4899;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;">4</div>
+    <div style="width:2px;height:20px;background:#ec4899;opacity:0.3;"></div>
+    <div style="background:#222120;border:1px solid #ec4899;border-radius:10px;padding:12px;text-align:center;width:108px;">
+      <div class="label" style="color:#ec4899;">HUMAN QA</div>
+      <h3 style="margin:5px 0 3px;font-size:13px;">Review</h3>
+      <p style="font-size:11px;color:#aaa;margin:0;">Reviewer resolves flags, approves batch</p>
+    </div>
+  </div>
+  <div style="padding-top:22px;color:#555;font-size:18px;flex-shrink:0;padding-left:3px;padding-right:3px;">→</div>
+  <div style="display:flex;flex-direction:column;align-items:center;min-width:120px;flex:1;">
+    <div style="width:44px;height:44px;border-radius:50%;background:#10b981;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;">5</div>
+    <div style="width:2px;height:20px;background:#10b981;opacity:0.3;"></div>
+    <div style="background:#222120;border:1px solid #10b981;border-radius:10px;padding:12px;text-align:center;width:108px;">
+      <div class="label" style="color:#10b981;">DELIVER</div>
+      <h3 style="margin:5px 0 3px;font-size:13px;">Done</h3>
+      <p style="font-size:11px;color:#aaa;margin:0;">E-filed + PDFs to client. Contractor copies emailed.</p>
+    </div>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px;">
+  <div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"><div class="label">Proactive Communication</div><p style="font-size:12px;color:#ccc;margin:5px 0 0;">Agent reaches out when something is missing — client never chases status</p></div>
+  <div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"><div class="label">Accountability</div><p style="font-size:12px;color:#ccc;margin:5px 0 0;">Human signs off before anything is filed — agency owns the outcome</p></div>
+  <div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"><div class="label">Service Pricing</div><p style="font-size:12px;color:#ccc;margin:5px 0 0;">Per engagement per season — aligns with how clients think about outsourcing</p></div>
+</div>
+</div>
+<h3>Agent Model</h3>
+<div class="dv-wrap" id="design-agent-model">
+<h2>The Agent Model — AI + Human Split</h2>
+<p class="subtitle">What AI handles autonomously vs. what escalates to human review</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+  <div style="background:#222120;border:1px solid #6366f1;border-radius:10px;padding:16px;">
+    <div class="label" style="color:#6366f1;">AI AGENT — Handles Autonomously</div>
+    <ul style="margin:10px 0 0;padding-left:16px;color:#ccc;font-size:12px;line-height:2;"><li>Parse and normalize data (CSV, QBO API pull)</li><li>Apply cash-basis filter — exclude CC transactions</li><li>Apply entity-type exclusions (C-corps, accounting firms)</li><li>Apply $2,000 threshold per vendor (2026)</li><li>Map to correct 1099 form type (NEC, MISC, INT)</li><li>Detect duplicate payees + canonicalize vendor names</li><li>Identify vendors with missing W-9s</li><li>Send automated W-9 request emails via Resend</li><li>Validate TIN format</li><li>Generate 1099 PDFs (pdf-lib)</li><li>Email contractor copies</li></ul>
+  </div>
+  <div style="background:#222120;border:1px solid #D97757;border-radius:10px;padding:16px;">
+    <div class="label" style="color:#D97757;">HUMAN REVIEWER — Escalated Cases</div>
+    <ul style="margin:10px 0 0;padding-left:16px;color:#ccc;font-size:12px;line-height:2;"><li>TIN mismatch / IRS B-Notice situations</li><li>Vendors who haven't returned W-9 after outreach</li><li>Ambiguous payment method classification</li><li>Ambiguous entity type (C-corp vs sole proprietor)</li><li>Canonicalization confidence below threshold</li><li>Unusually large payment amounts (fraud check)</li><li>Foreign contractor / W-8 complications</li><li>Final batch approval before e-filing</li><li>Amended returns (1099-X)</li></ul>
+  </div>
+</div>
+<div style="margin-top:12px;background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:14px;"><div class="label">EFFICIENCY HYPOTHESIS</div><p style="font-size:12px;color:#ccc;margin:6px 0 0;">One human reviewer can oversee 50–100 concurrent jobs with AI handling 90%+ autonomously. Service-level pricing at software-level costs.</p></div>
+</div>
+<h3>Pricing Model</h3>
+<div class="dv-wrap" id="design-pricing">
+<h2>Pricing Model</h2>
+<p class="subtitle">SaaS subscription tiers + $4/form AI-managed 1099 add-on</p>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+  <div style="background:#222120;border:1px solid #6366f1;border-radius:10px;padding:16px;text-align:center;"><div class="label" style="color:#6366f1;">FREE</div><div style="font-size:28px;font-weight:700;color:#fff;margin:8px 0 3px;">$0</div><div style="font-size:11px;color:#aaa;margin-bottom:12px;">forever</div><ul style="padding-left:14px;color:#ccc;font-size:12px;line-height:1.9;margin:0;text-align:left;"><li>100 rows/month</li><li>1 QBO company</li><li>1 user</li><li>14-day history</li></ul></div>
+  <div style="background:#222120;border:2px solid #8b5cf6;border-radius:10px;padding:16px;text-align:center;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#8b5cf6;color:white;font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;">MOST POPULAR</div><div class="label" style="color:#8b5cf6;">STARTER</div><div style="font-size:28px;font-weight:700;color:#fff;margin:8px 0 3px;">$25</div><div style="font-size:11px;color:#aaa;margin-bottom:12px;">per month</div><ul style="padding-left:14px;color:#ccc;font-size:12px;line-height:1.9;margin:0;text-align:left;"><li>Unlimited rows</li><li>1 QBO company</li><li>3 users</li><li>90-day history</li></ul></div>
+  <div style="background:#222120;border:1px solid #10b981;border-radius:10px;padding:16px;text-align:center;"><div class="label" style="color:#10b981;">MULTI-ENTITY</div><div style="font-size:28px;font-weight:700;color:#fff;margin:8px 0 3px;">$79</div><div style="font-size:11px;color:#aaa;margin-bottom:12px;">per month</div><ul style="padding-left:14px;color:#ccc;font-size:12px;line-height:1.9;margin:0;text-align:left;"><li>Unlimited rows</li><li>5 QBO companies</li><li>10 users</li><li>12-month history</li></ul></div>
+</div>
+<div style="margin-top:12px;background:#222120;border:1px solid #D97757;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;">1099 CENTER ADD-ON</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px;text-align:center;"><div><div style="font-size:12px;color:#aaa;margin-bottom:3px;">Price</div><div style="font-size:16px;font-weight:700;color:#D97757;">$4/form</div><div style="font-size:10px;color:#555;margin-top:2px;">No monthly fee</div></div><div style="border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);"><div style="font-size:12px;color:#aaa;margin-bottom:3px;">What's included</div><div style="font-size:12px;font-weight:600;color:#ccc;">Cleanup + filing</div><div style="font-size:10px;color:#555;margin-top:2px;">Canonicalization, W-9 chase, PDF, FIRE upload</div></div><div><div style="font-size:12px;color:#aaa;margin-bottom:3px;">vs competitors</div><div style="font-size:12px;font-weight:600;color:#7eb87e;">$0.80–3.10/form</div><div style="font-size:10px;color:#555;margin-top:2px;">Filing only — no cleanup</div></div></div></div>
+</div>
+<h3>MVP Scope</h3>
+<div class="dv-wrap" id="design-mvp-scope">
+<h2>MVP Scope</h2>
+<p class="subtitle">Smallest thing that validates willingness to pay for done-for-you 1099 processing</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+  <div>
+    <div class="label" style="color:#7eb87e;margin-bottom:8px;">IN SCOPE</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#fff;">Client upload portal</div><p style="font-size:11px;color:#aaa;margin:2px 0 0;">Account creation, connect QBO via OAuth or upload CSV. Stripe checkout at submission.</p></div>
+      <div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#fff;">AI processing pipeline</div><p style="font-size:11px;color:#aaa;margin:2px 0 0;">Parse, cash-basis filter, classify, generate 1099 drafts via Inngest.</p></div>
+      <div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#fff;">W-9 chase workflow</div><p style="font-size:11px;color:#aaa;margin:2px 0 0;">Identify missing W-9s, automated email via Resend, track responses.</p></div>
+      <div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#fff;">Internal reviewer dashboard</div><p style="font-size:11px;color:#aaa;margin:2px 0 0;">Resolve flags, approve batch before filing.</p></div>
+      <div style="background:#222120;border-left:3px solid #7eb87e;border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#fff;">PDF generation + delivery</div><p style="font-size:11px;color:#aaa;margin:2px 0 0;">pdf-lib. Portal download, email copies to contractors.</p></div>
+    </div>
+  </div>
+  <div>
+    <div class="label" style="color:#555;margin-bottom:8px;">DEFERRED</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#444;">IRS IRIS API</div><p style="font-size:11px;color:#3a3836;margin:2px 0 0;">Manual FIRE upload in v1. IRIS API mandatory Dec 31, 2026.</p></div>
+      <div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#444;">Twilio phone outreach</div><p style="font-size:11px;color:#3a3836;margin:2px 0 0;">Email-only in v1. Phone calls in v2.</p></div>
+      <div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#444;">Xero / FreshBooks OAuth</div><p style="font-size:11px;color:#3a3836;margin:2px 0 0;">Interface built. Implementations deferred.</p></div>
+      <div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#444;">State filing</div><p style="font-size:11px;color:#3a3836;margin:2px 0 0;">Federal only for MVP.</p></div>
+      <div style="background:#222120;border-left:3px solid rgba(255,255,255,0.07);border-radius:0 6px 6px 0;padding:10px 12px;"><div style="font-size:12px;font-weight:600;color:#444;">IRS TIN matching API</div><p style="font-size:11px;color:#3a3836;margin:2px 0 0;">Format validation only in v1. Live API after approval clears.</p></div>
+    </div>
+  </div>
+</div>
+<div style="margin-top:12px;background:#222120;border:1px solid #D97757;border-radius:8px;padding:14px;"><div class="label" style="color:#D97757;">VALIDATION SIGNAL</div><p style="font-size:12px;color:#ccc;margin:6px 0 0;"><strong style="color:#fff;">5 paying companies</strong> complete a full job cycle and at least 3 say they'd use it again next year.</p></div>
+</div>
+<h2>Domain Context</h2>
+<p>From a tax domain expert review (Will Rosler) — the real complexity of 1099 processing.</p>
+<h3>Why the vendor list is hard</h3>
+<p>QuickBooks vendor totals reporting is not cash-basis-aware and doesn't exclude CC payments automatically. Businesses often pay vendors via multiple methods (ACH for most, check or wire for some), making categorization inconsistent. The AI agent must reconcile raw payment data to produce the correct qualifying vendor list — which is the core value, not the filing itself.</p>
+<ul><li>Required for any vendor paid $2,000+ on a cash basis in the tax year (OBBBA raised threshold from $600)</li><li>Excluded: C-corps, payments to accounting firms, credit card payments</li><li>Only ACH, wire, and check payments count</li><li>1099-NEC (contractors), 1099-MISC (rent, attorneys), 1099-INT (non-bank interest)</li></ul>
+<h3>The W-9 catch-22</h3>
+<p>To determine if a vendor needs a 1099, you need their TIN and entity type (from a W-9). But you need to know they qualify first — which requires having their info. Many vendors slip through onboarding without one. Following up near the January deadline is painful and often ignored. If TINs don't match the IRS name/ID on file, filings bounce back.</p>
+<p>The agency solves this by proactively chasing missing W-9s via automated email outreach, well before the filing deadline.</p>
+<h3>Market gap</h3>
+<div class="dv-wrap" id="domain-market-gap">
+<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><th style="text-align:left;padding:8px 10px;color:#9e9c94;font-weight:600;">Solution</th><th style="text-align:center;padding:8px 10px;color:#9e9c94;font-weight:600;">Vendor list cleanup</th><th style="text-align:center;padding:8px 10px;color:#9e9c94;font-weight:600;">W-9 collection</th><th style="text-align:center;padding:8px 10px;color:#9e9c94;font-weight:600;">Filing</th></tr></thead><tbody><tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 10px;color:#ccc;">AP software</td><td style="text-align:center;padding:8px 10px;color:#9e9c94;">Partial</td><td style="text-align:center;padding:8px 10px;color:#9e9c94;">At onboarding only</td><td style="text-align:center;padding:8px 10px;color:#ef4444;">No</td></tr><tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 10px;color:#ccc;">DIY software (Track1099)</td><td style="text-align:center;padding:8px 10px;color:#ef4444;">No</td><td style="text-align:center;padding:8px 10px;color:#ef4444;">No</td><td style="text-align:center;padding:8px 10px;color:#7eb87e;">Yes</td></tr><tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:8px 10px;color:#ccc;">Accountants</td><td style="text-align:center;padding:8px 10px;color:#7eb87e;">Yes</td><td style="text-align:center;padding:8px 10px;color:#7eb87e;">Yes</td><td style="text-align:center;padding:8px 10px;color:#7eb87e;">Yes</td></tr><tr><td style="padding:8px 10px;color:#D97757;font-weight:600;">Sterling (us)</td><td style="text-align:center;padding:8px 10px;color:#7eb87e;font-weight:600;">Yes (AI)</td><td style="text-align:center;padding:8px 10px;color:#7eb87e;font-weight:600;">Yes (automated)</td><td style="text-align:center;padding:8px 10px;color:#7eb87e;font-weight:600;">Yes</td></tr></tbody></table></div>
+</div>
+<h2>Data Ingestion Strategy</h2>
+<p>Both paths produce identical normalized output — the rest of the pipeline is unchanged regardless of source.</p>
+<div class="dv-wrap" id="data-ingestion">
+<h2>AccountingProvider Interface</h2>
+<p class="subtitle">Provider-agnostic — QBO is the first implementation, CSV is the fallback</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+  <div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">QBO OAuth 2.0</div><p style="font-size:12px;color:#aaa;margin:0 0 6px;">Pulls raw Purchase + BillPayment transactions directly from QBO API. Cash-basis filter and CC exclusion applied server-side.</p><p style="font-size:11px;color:#555;margin:0;">Scope: com.intuit.quickbooks.accounting</p></div>
+  <div style="background:#222120;border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">CSV Upload</div><p style="font-size:12px;color:#aaa;margin:0 0 6px;">Manual fallback. Columns: vendor name, amount, payment method, entity type, EIN, date. Works for any accounting tool.</p><p style="font-size:11px;color:#555;margin:0;">Future: Xero, FreshBooks, Wave — same interface, no downstream changes.</p></div>
+</div>
+<div style="background:#2a2927;border-radius:8px;padding:14px;"><pre style="font-size:11.5px;color:#ccc;margin:0;overflow-x:auto;"><code>interface AccountingProvider {
+  id: string
+  label: string
+  getAuthUrl(state: string): string
+  exchangeCode(code: string, realmId?: string): Promise&lt;OAuthTokens&gt;
+  fetchTransactions(tokens: OAuthTokens, year: number): Promise&lt;RawTransaction[]&gt;
+}
+<p>interface RawTransaction {   vendorName: string   vendorEmail: string | null   amountCents: number   paymentMethod: 'ach' | 'check' | 'wire' | 'credit_card' | 'unknown'   entityType: string | null   ein: string | null   date: string }&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt; &lt;/div&gt;</p>
+<h2>Tech Stack</h2>
+<div class="dv-wrap" id="tech-stack">
+<h2>Confirmed Stack — Lean MVP</h2>
+<p class="subtitle">Each service earns its place. Nothing speculative.</p>
+<div style="display:flex;flex-direction:column;gap:6px;">
+  <div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"><div style="font-size:12px;font-weight:600;color:#D97757;">Next.js 16 + TypeScript</div><div style="font-size:11.5px;color:#9e9c94;">App Router. Server components fetch via Prisma. Mutations via API routes. Vitest for tests.</div></div>
+  <div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"><div style="font-size:12px;font-weight:600;color:#D97757;">Prisma + Neon</div><div style="font-size:11.5px;color:#9e9c94;">Serverless Postgres. Models: User, Workspace, Entity, Operation, TaxJob, TaxVendor. Scales to zero.</div></div>
+  <div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"><div style="font-size:12px;font-weight:600;color:#D97757;">Clerk</div><div style="font-size:11.5px;color:#9e9c94;">Auth — sign-up, sign-in, webhook to sync User to DB.</div></div>
+  <div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"><div style="font-size:12px;font-weight:600;color:#D97757;">Stripe</div><div style="font-size:11.5px;color:#9e9c94;">Subscription Checkout Sessions (Starter/Multi-entity) + per-form charges ($4/form for 1099). Webhook updates workspace.plan.</div></div>
+  <div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"><div style="font-size:12px;font-weight:600;color:#D97757;">Inngest</div><div style="font-size:11.5px;color:#9e9c94;">Durable background job queue. Import/edit/delete/canonicalize/W-9 chase each run as Inngest functions. Built-in retry, observability.</div></div>
+  <div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"><div style="font-size:12px;font-weight:600;color:#D97757;">Resend</div><div style="font-size:11.5px;color:#9e9c94;">Transactional email — W-9 outreach, status notifications, 1099 copies to contractors. Free tier covers MVP.</div></div>
+  <div style="display:grid;grid-template-columns:148px 1fr;gap:10px;align-items:start;background:#222120;border-radius:8px;padding:11px 12px;"><div style="font-size:12px;font-weight:600;color:#D97757;">Plaid (Plan 6)</div><div style="font-size:11.5px;color:#9e9c94;">Bank feed integration. Nightly sync of transactions for vendor canonicalization cross-reference. V1 priority — without it Sterling is "a glorified Track1099".</div></div>
+</div>
+<div style="margin-top:10px;background:#222120;border-radius:8px;padding:11px 12px;"><div class="label" style="color:#444;margin-bottom:6px;">DEFERRED</div><div style="display:flex;flex-wrap:wrap;gap:5px;"><span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;">Twilio (phone v2)</span><span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;">IRS IRIS API (v2)</span><span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;">IRS TIN Matching (v2)</span><span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;">Axiom logs</span><span style="font-size:11px;color:#444;background:#1a1918;border:1px solid rgba(255,255,255,0.04);padding:2px 7px;border-radius:4px;">PostHog analytics</span></div></div>
+</div>
+<h2>Implementation Plan</h2>
+<p>Seven sequential plans. Plans 1–3 are complete. Plans 4–7 are the remaining build.</p>
+<h3>Plan 1 — Foundation &amp; Client Portal ✅</h3>
+<div class="dv-wrap" id="plan1">
+<h2>Plan 1 — Foundation & Client Portal</h2>
+<p class="subtitle">Status: <span style="color:#7eb87e;font-weight:600;">COMPLETE</span> · 10 tasks · 20 tests</p>
+<div style="display:flex;flex-direction:column;gap:7px;">
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#3a3836;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7eb87e;flex-shrink:0;margin-top:1px;">✓</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Scaffold the Project</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">create-next-app · install Inngest, Resend · Vitest config</div><div style="margin-top:5px;"><span class="plan-chip">package.json</span><span class="plan-chip">vitest.config.ts</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#3a3836;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7eb87e;flex-shrink:0;margin-top:1px;">✓</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Prisma Schema + Database</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">User · Workspace · Entity · Operation · TaxJob · TaxVendor</div><div style="margin-top:5px;"><span class="plan-chip">prisma/schema.prisma</span><span class="plan-chip">src/lib/db.ts</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#3a3836;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7eb87e;flex-shrink:0;margin-top:1px;">✓</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Clerk Auth + Middleware</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Sign-in · protect /dashboard · user sync webhook</div><div style="margin-top:5px;"><span class="plan-chip">src/middleware.ts</span><span class="plan-chip">api/clerk/webhook</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#3a3836;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7eb87e;flex-shrink:0;margin-top:1px;">✓</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">QBO OAuth + Provider Interface</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">AccountingProvider interface · QBO + CSV implementations · connect/callback</div><div style="margin-top:5px;"><span class="plan-chip">lib/providers/qbo.ts</span><span class="plan-chip">lib/providers/types.ts</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#3a3836;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7eb87e;flex-shrink:0;margin-top:1px;">✓</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Stripe Checkout + Webhook</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Checkout session · portal · webhook → workspace.plan update</div><div style="margin-top:5px;"><span class="plan-chip">src/lib/stripe.ts</span><span class="plan-chip">api/billing/checkout</span><span class="plan-chip">api/webhooks/stripe</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#3a3836;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#7eb87e;flex-shrink:0;margin-top:1px;">✓</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Dashboard Shell + Nav</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Sidebar nav · home dashboard · all operation pages</div><div style="margin-top:5px;"><span class="plan-chip">app/(dashboard)/layout.tsx</span><span class="plan-chip">dashboard/page.tsx</span></div></div></div>
+</div>
+</div>
+<h3>Plan 2 — Core QBO Operations ✅</h3>
+<div class="dv-wrap" id="plan2">
+<h2>Plan 2 — Core QBO Operations</h2>
+<p class="subtitle">Status: <span style="color:#7eb87e;font-weight:600;">COMPLETE</span> · Import · Export · Edit · Delete</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#7eb87e;margin-bottom:6px;">SHIPPED</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Import CSV → QBO (AI column mapping)<br>Export QBO → CSV (filters + columns)<br>Mass-edit (account reclassification)<br>Mass-delete (void + hard delete)<br>Inngest background jobs for all ops<br>History + audit log + rerun button</div></div>
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">KEY FILES</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">src/lib/qbo-write.ts<br>src/lib/qbo-query.ts<br>src/inngest/functions/import-to-qbo.ts<br>src/inngest/functions/edit-qbo.ts<br>src/inngest/functions/delete-from-qbo.ts<br>src/app/api/export/submit/route.ts</div></div>
+</div>
+</div>
+<h3>Plan 3 — Platform UI &amp; Billing Scaffold ✅</h3>
+<div class="dv-wrap" id="plan3">
+<h2>Plan 3 — Platform UI & Billing Scaffold</h2>
+<p class="subtitle">Status: <span style="color:#7eb87e;font-weight:600;">COMPLETE</span> · all screens built</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#7eb87e;margin-bottom:6px;">SHIPPED</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Export, Edit, Delete, Receipt scan pages<br>Multi-entity UI + upgrade paywall<br>1099 Center UI + TaxJob model<br>Settings (workspace, billing, members)<br>History page with filter tabs<br>Operation detail + rerun button</div></div>
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">STUB / NOT WIRED</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Stripe price IDs are placeholders<br>Receipt scan has no OCR call<br>1099 Center has no W-9 chase or filing<br>No plan limits enforced anywhere<br>No token refresh (fails after ~1hr)<br>Reverts not implemented</div></div>
+</div>
+</div>
+<h3>Plan 4 — Production Hardening</h3>
+<div class="dv-wrap" id="plan4">
+<h2>Plan 4 — Production Hardening</h2>
+<p class="subtitle">Status: <span style="color:#d97706;font-weight:600;">NEXT SPRINT</span> · makes what's built reliable and billable</p>
+<div style="display:flex;flex-direction:column;gap:7px;">
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">1</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">QBO Token Refresh</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">ensureFreshToken() helper · call Intuit refresh endpoint · thread through all Inngest functions</div><div style="margin-top:5px;"><span class="plan-chip">src/lib/providers/qbo.ts</span><span class="plan-chip">import-to-qbo.ts</span><span class="plan-chip">edit-qbo.ts</span><span class="plan-chip">delete-from-qbo.ts</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">2</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Stripe Real Credentials</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Create Starter ($25/mo) + Multi-entity ($79/mo) products in Stripe · swap placeholder price IDs · test full checkout → webhook → plan update loop</div><div style="margin-top:5px;"><span class="plan-chip">api/billing/checkout/route.ts</span><span class="plan-chip">.env.local</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">3</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Schema Migration — Usage Tracking</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Add monthlyRowsUsed + billingPeriodStart to Workspace · prerequisite for quota enforcement</div><div style="margin-top:5px;"><span class="plan-chip">prisma/schema.prisma</span><span class="plan-chip plan-chip-amber">migration required</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">4</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Row Quota + Entity Count Enforcement</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">checkRowQuota helper · FREE = 100 rows/mo · return 402 + upgradeRequired · entity limit check in QBO connect callback</div><div style="margin-top:5px;"><span class="plan-chip">src/lib/pricing.ts</span><span class="plan-chip">api/import/submit</span><span class="plan-chip">api/export/submit</span><span class="plan-chip">api/edit/submit</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">5</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">UpgradePrompt Component</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Shared inline CTA shown when any gate returns 402 · routes to /api/billing/checkout?plan=starter</div><div style="margin-top:5px;"><span class="plan-chip">src/components/upgrade-prompt.tsx</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">6</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Revert Operations</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">POST /api/operations/[id]/revert · Inngest function · makes "reverts are free" claim real</div><div style="margin-top:5px;"><span class="plan-chip">api/operations/[id]/revert/route.ts</span><span class="plan-chip">inngest/revert-operation.ts</span></div></div></div>
+</div>
+</div>
+<h3>Plan 5 — 1099 Managed Service</h3>
+<div class="dv-wrap" id="plan5">
+<h2>Plan 5 — 1099 Managed Service</h2>
+<p class="subtitle">Status: <span style="color:#555;font-weight:600;">NOT STARTED</span> · $4/form AI-managed add-on</p>
+<div style="display:flex;flex-direction:column;gap:7px;">
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">1</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Vendor Canonicalization Engine</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Fuzzy match + embedding similarity + LLM review · confidence scoring (≥90% auto, 70–89% question, &lt;70% flag) · VendorAlias model</div><div style="margin-top:5px;"><span class="plan-chip">src/lib/vendor-canonicalization.ts</span><span class="plan-chip">inngest/canonicalize-vendors.ts</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">2</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">W-9 Chase + Magic-Link Intake</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">Resend email outreach · no-login W-9 intake form · TIN stored to TaxVendor</div><div style="margin-top:5px;"><span class="plan-chip">api/1099/chase-w9/route.ts</span><span class="plan-chip">app/(public)/w9/[token]/page.tsx</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">3</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">TIN Validation + Threshold Logic</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">EIN/SSN format validation · $2,000 threshold for 2026 (OBBBA) · multi-year back-filing support</div><div style="margin-top:5px;"><span class="plan-chip">src/lib/tin-validation.ts</span><span class="plan-chip plan-chip-amber">$2k threshold 2026</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">4</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">1099-NEC PDF + IRS FIRE Export</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">pdf-lib per-vendor PDFs · IRS Pub 1220 flat file · accountant downloads + uploads manually in V1</div><div style="margin-top:5px;"><span class="plan-chip">src/lib/1099-pdf.ts</span><span class="plan-chip">src/lib/1099-fire.ts</span></div></div></div>
+  <div class="plan-panel" style="display:flex;align-items:flex-start;gap:10px;"><div style="width:24px;height:24px;border-radius:50%;background:#D97757;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;margin-top:1px;">5</div><div><div style="font-size:12px;font-weight:600;color:#d1cfc5;">Stripe Per-Form Billing</div><div style="font-size:11px;color:#6b6860;margin-top:1px;">price_1099_form one-time charge · invoice on TaxJob completion · $4/form</div><div style="margin-top:5px;"><span class="plan-chip">api/1099/charge/route.ts</span><span class="plan-chip plan-chip-amber">Stripe invoice items</span></div></div></div>
+</div>
+<div style="margin-top:12px;background:#222120;border:1px solid #ef4444;border-radius:8px;padding:12px;"><div class="label" style="color:#ef4444;">NON-CODE PREREQUISITE — DO THIS WEEK</div><div style="font-size:11.5px;color:#9e9c94;margin-top:6px;line-height:1.8;">File IRS TIN Matching e-services application at irs.gov — 4–8 week approval lag<br>File IRS FIRE Transmitter Control Code at fire.irs.gov — required to upload 1099s<br>Register for IRS IRIS — replaces FIRE by Dec 31, 2026<br>Legal/liability review — TOS language before clients sign</div></div>
+</div>
 <h3>Plan 6 — Accountant Platform</h3>
-<p>Builds the multi-client workspace that makes Sterling an accountant's daily tool.</p>
-<ul><li><strong>Multi-client dashboard</strong> — <code>Client</code> Prisma model; <code>src/app/(dashboard)/dashboard/clients/page.tsx</code> with client list, job status, flag queue, W-9 status per client</li><li><strong>Plaid bank feed integration</strong> — <code>src/lib/plaid.ts</code>; Link flow; nightly sync → <code>BankTransaction</code> model; required for canonicalization to cross-reference cash payments against QBO vendor names</li><li><strong>Prior-year 1099 + W-9 upload</strong> — skip re-chasing known vendors; parse prior W-9 TINs and cross-reference against current year list</li><li><strong>Receipt scan OCR</strong> — wire Claude claude-sonnet-4-6 vision API into existing Inngest skeleton (<code>src/inngest/functions/scan-receipt.ts</code>)</li><li><strong>Safe merge</strong> — <code>src/app/(dashboard)/dashboard/merge/page.tsx</code> + <code>src/inngest/functions/merge-qbo.ts</code>; consolidate duplicate vendors/customers/accounts with pre-merge snapshot for revert</li></ul>
+<div class="dv-wrap" id="plan6">
+<h2>Plan 6 — Accountant Platform</h2>
+<p class="subtitle">Status: <span style="color:#555;font-weight:600;">NOT STARTED</span> · multi-client workspace + Plaid</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">MULTI-CLIENT DASHBOARD</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Client Prisma model<br>Client list with job status + flag queue<br>Per-client entity + operation view<br>src/app/(dashboard)/dashboard/clients/</div></div>
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">PLAID BANK FEEDS</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Plaid Link flow<br>Nightly sync → BankTransaction model<br>Cross-reference for canonicalization<br>src/lib/plaid.ts + inngest/sync-bank-feed.ts</div></div>
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">RECEIPT SCAN OCR</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Wire Claude claude-sonnet-4-6 vision API<br>Infrastructure already exists<br>src/inngest/functions/scan-receipt.ts</div></div>
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">SAFE MERGE</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Merge duplicate vendors/customers/accounts<br>Pre-merge snapshot for revert<br>src/app/(dashboard)/dashboard/merge/<br>src/inngest/functions/merge-qbo.ts</div></div>
+</div>
+</div>
 <h3>Plan 7 — Scale &amp; Polish</h3>
-<p>Fills remaining BookMule feature gaps and hardens for growth.</p>
-<ul><li>Export XLSX + email delivery (Resend) + scheduled exports (Inngest cron)</li><li>Cross-entity operations (fan out import/export/edit/delete across all workspace entities)</li><li>Member invites (Clerk org invitations) + seat enforcement in invite route</li><li>IRS IRIS API migration (replaces FIRE — mandatory Dec 31, 2026)</li><li>Live IRS TIN Matching API (once approval clears)</li><li>QBO App Store listing (V2 — requires Intuit certification, ~6–8 weeks)</li></ul>
-<h2>Key Decisions</h2>
-<ul><li><strong>Accountants, not direct SMB</strong>: One accountant = 20–200 SMB clients. Cleaner ICP, B2B sales motion, lower CAC, repeat revenue. Bill.com made this exact bet.</li><li><strong>Per-vendor pricing for 1099</strong>: $8–12/vendor, $200–300 minimum (to A/B-test against flat tier). Aligns price with the cleanup work, not the filing. Easy for accountants to mark up to clients.</li><li><strong>Plaid is V1, not V2</strong>: Without bank feed data, vendor canonicalization only has one source (QBO). The product becomes "a glorified Track1099." Plaid cross-reference is what makes the canonical vendor graph meaningful.</li><li><strong>QBO App Store is V2</strong>: Discoverability is real but puts the product on Intuit's roadmap radar, constrains to QBO-only, and has mediocre conversion. Better as a supplementary channel after accountant validation.</li><li><strong>IRS e-filing is manual V1</strong>: FIRE flat file download + manual upload. IRS IRIS API replaces this by Dec 31, 2026 (mandatory transition). Register for IRIS now even though V1 uses FIRE.</li></ul>
-<h2>IRS Application Checklist (non-code, do immediately)</h2>
-<ul><li><input type="checkbox" disabled> File IRS TIN Matching e-services at irs.gov — 4–8 week approval; V1 ships with format-only validation while waiting</li><li><input type="checkbox" disabled> File IRS FIRE Transmitter Control Code at fire.irs.gov — required to upload 1099s</li><li><input type="checkbox" disabled> Register for IRS IRIS — replaces FIRE by Dec 31, 2026; also weeks of lag</li><li><input type="checkbox" disabled> Legal/liability structure review — TOS language, who signs the filing (lawyer review before clients sign)</li></ul>
+<div class="dv-wrap" id="plan7">
+<h2>Plan 7 — Scale & Polish</h2>
+<p class="subtitle">Status: <span style="color:#555;font-weight:600;">NOT STARTED</span> · feature completeness + compliance</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">FEATURE GAPS</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">Export XLSX + email + scheduled (Inngest cron)<br>Cross-entity bulk operations<br>Member invites (Clerk org) + seat enforcement<br>Prior-year 1099 + W-9 upload</div></div>
+  <div style="background:#222120;border-radius:8px;padding:12px;"><div class="label" style="color:#D97757;margin-bottom:6px;">COMPLIANCE / SCALE</div><div style="font-size:11.5px;color:#9e9c94;line-height:2;">IRS IRIS API migration (mandatory Dec 31, 2026)<br>Live IRS TIN Matching API (post-approval)<br>QBO App Store listing (V2 per Will)<br>SOC 2 posture statement</div></div>
+</div>
+</div>
+<h2>Action Items</h2>
+<ul><li><input type="checkbox" checked disabled> Have tax domain expert (Will Rosler) review agent model and 1099 rules</li><li><input type="checkbox" checked disabled> Move to implementation planning — Plans 1–3 fully executed</li><li><input type="checkbox" checked disabled> Decide tech stack — Next.js 16, Prisma + Neon, Clerk, Stripe, Inngest, Resend</li><li><input type="checkbox" checked disabled> Decide data ingestion strategy — QBO OAuth + CSV with AccountingProvider interface</li><li><input type="checkbox" checked disabled> Ship Plans 1–3 — core QBO operations, Stripe scaffold, full platform UI</li><li><input type="checkbox" checked disabled> Fix QBO Bill import errors (Line array, AccountRef ID lookup)</li><li><input type="checkbox" checked disabled> Add operation rerun button to history detail page</li><li><input type="checkbox" disabled> <strong>File IRS TIN Matching e-services application</strong> — irs.gov (4–8 week lag, do this week)</li><li><input type="checkbox" disabled> <strong>File IRS FIRE Transmitter Control Code</strong> — fire.irs.gov (do this week)</li><li><input type="checkbox" disabled> <strong>Register for IRS IRIS</strong> — replaces FIRE by Dec 31, 2026 (do this week)</li><li><input type="checkbox" disabled> Execute Plan 4 — Production Hardening (token refresh, Stripe real creds, enforcement)</li><li><input type="checkbox" disabled> Execute Plan 5 — 1099 Managed Service (canonicalization, W-9 chase, PDF, FIRE)</li><li><input type="checkbox" disabled> Execute Plan 6 — Accountant Platform (multi-client, Plaid, receipt OCR, safe merge)</li><li><input type="checkbox" disabled> Execute Plan 7 — Scale &amp; Polish (XLSX, cross-entity, IRIS migration)</li><li><input type="checkbox" disabled> Recruit 5–10 design-partner accountants (solo CPAs, small bookkeeping firms with 50+ SMB clients)</li><li><input type="checkbox" disabled> Validate per-vendor pricing ($8–12/vendor, $200–300 minimum) with design partners</li><li><input type="checkbox" disabled> Determine legal/liability structure (TOS before clients sign)</li></ul>
       </div>
       <div id="claude-context" style="display:none">I'm picking up from a previous Claude Code session.
 
@@ -291,27 +645,28 @@
 **Date:** 2026-05-22
 
 ### What we worked on
-The project arc runs from original concept (AI agency managed service for 1099 processing) through a product pivot (accountant-facing SaaS with a $4/form AI-managed 1099 add-on) to a current codebase (Sterling) that has shipped the core QBO write operations. This session did a full gap analysis comparing the built codebase against BookMule's feature set, incorporated Will Rosler's strategic notes (accountant ICP, vendor canonicalization as moat, Plaid as V1 must-have, IRS application urgency), added Stripe/enforcement planning, and synthesized everything into four remaining implementation plans. The design spec is at `docs/superpowers/specs/2026-05-26-sterling-roadmap-design.md`.
+The full arc: from original AI agency managed service concept → domain expert review (Will Rosler) → pivot to accountant-facing SaaS (Sterling) → shipping Plans 1–3 (QBO import/edit/delete/export, Stripe scaffolding, full platform UI) → gap analysis against BookMule feature set → four remaining implementation plans (production hardening, 1099 managed service, accountant platform, scale/polish). The codebase is at `/Users/chasestephens/workspace/brainstorming/ai-agency/app`. Full roadmap spec at `docs/superpowers/specs/2026-05-26-sterling-roadmap-design.md`.
 
 ### Key decisions and why
-- **Accountant ICP over direct SMB**: Volume leverage — one accountant = 20-200 clients. Cleaner targeting on LinkedIn (bookkeeper, fractional CFO, CAS lead). Better CAC, longer relationships.
-- **Vendor canonicalization is the moat**: The differentiation isn't filing speed — it's resolving name variants across QBO + bank feeds. Track1099/Tax1099 expect clean data; Sterling produces it. This is the IP that compounds over time as the vendor graph grows.
-- **Plaid is Plan 6, not optional**: Without bank data the canonicalization engine only has QBO names. One data source = limited differentiation. Two sources = the "we already have this vendor's payment history" graph that no filing tool can replicate.
-- **Production hardening before new features (Plan 4 first)**: Token refresh is a silent failure mode. Stripe has placeholder price IDs. Zero plan limits enforced. Shipping features on top of this foundation creates customer trust issues when they hit the silent failures. Fix the foundation first.
-- **$2,000 threshold for 2026**: OBBBA passed and reverted the previously planned lower thresholds. The $600 threshold referenced in earlier docs is wrong for tax year 2026. Multi-year support needed because accountants back-file for clients who skipped.
+- **Accountant ICP over direct SMB**: One accountant = 20–200 SMB clients. Cleaner LinkedIn targeting, B2B sales motion, lower CAC. Bill.com made this exact bet.
+- **Vendor canonicalization is the moat**: Resolving "Joe's Plumbing LLC" + "JOSEPHS PLUM ACH" + "Joe Smith Plumbing" = same vendor across QBO + bank feeds. This is the IP that filing-only tools can't replicate.
+- **Plaid is V1, not V2**: Without bank feed cross-reference the canonicalization engine only has QBO names. One source = limited differentiation.
+- **Production hardening before new features**: Token refresh is a silent failure. Stripe has placeholder IDs. No plan limits enforced. Fix the foundation before adding more.
+- **$2,000 threshold for 2026**: OBBBA passed. Earlier $600 references in docs are wrong for tax year 2026. Multi-year support needed for back-filing.
+- **IRS applications this week**: TIN Matching e-services + FIRE TCC + IRIS all have 4–8 week approval lags. Filing late = V1 ships with format-only validation, B-Notices land on clients.
 
 ### Current state
-Plans 1–3 are complete. The codebase has solid QBO write operations, Stripe scaffolding (needs real price IDs), Clerk auth, and history/audit. The four remaining plans are: (4) production hardening — token refresh + Stripe real creds + plan enforcement; (5) 1099 managed service — canonicalization + W-9 chase + PDF + FIRE filing; (6) accountant platform — multi-client dashboard + Plaid + prior-year upload + safe merge + receipt OCR; (7) scale/polish — XLSX export, cross-entity ops, member invites, IRIS migration.
+Plans 1–3 complete. Core QBO write operations (import, edit, delete, export) are production-ready. Stripe code exists but uses placeholder price IDs. Zero plan limits enforced. QBO tokens expire after ~1hr with no refresh. "Reverts are free" has no backend. Receipt scan and 1099 Center are UI-only stubs. Four plans remain, starting with production hardening.
 
 ### Good places to pick up
-- **Immediately (non-code):** File IRS TIN Matching + FIRE TCC + IRIS applications this week — 4-8 week lag blocks Plan 5 revenue
-- **Plan 4, first task:** `ensureFreshToken` helper in `src/lib/providers/qbo.ts` — one function, unblocks all production usage
-- **Plan 4, second task:** Create Stripe products in dashboard, swap price IDs in env, run `stripe listen` locally, test the full checkout → webhook → plan update loop
-- **Plan 5 prep:** Write the vendor canonicalization spec before building — it's the hardest piece and the most valuable; the design deserves its own brainstorm session</div>
+- **Immediately (non-code):** File IRS applications this week — TIN Matching + FIRE TCC + IRIS registration
+- **Plan 4, first task:** `ensureFreshToken` in `src/lib/providers/qbo.ts` — one function, unblocks all production usage
+- **Plan 4, second task:** Create Stripe products in dashboard → swap price IDs in env → run `stripe listen` → test checkout → webhook loop
+- **Plan 5 prep:** Vendor canonicalization is the hardest piece — spec it separately before building; the design deserves its own brainstorm session</div>
     </main>
 
     <footer class="note-footer">
-      <span>Generated Tue, 26 May 2026 20:16:22 GMT</span>
+      <span>Generated Tue, 26 May 2026 20:27:24 GMT</span>
       <span><a href="https://notes.thethoughtdungeon.com">notes.thethoughtdungeon.com</a></span>
     </footer>
   </div>
