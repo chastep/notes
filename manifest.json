@@ -1,5 +1,12 @@
 [
   {
+    "uuid": "2026-05-26-73fb2a62",
+    "title": "Sterling → BookMule Gap Analysis & Remaining Build Plan",
+    "date": "2026-05-26",
+    "description": "Full audit of what Sterling has built vs. what BookMule ships, with a prioritized list of remaining work organized by unlock value.",
+    "url": "https://notes.thethoughtdungeon.com/2026-05-26-73fb2a62"
+  },
+  {
     "uuid": "2026-05-22-b8ddb520",
     "title": "AI Agency Business Concept — 1099 Processing MVP",
     "date": "2026-05-22",
