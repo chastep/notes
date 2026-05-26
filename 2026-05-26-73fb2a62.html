@@ -6,7 +6,7 @@
   <meta name="note-uuid" content="2026-05-26-73fb2a62">
   <meta name="note-title" content="Sterling → BookMule Gap Analysis & Remaining Build Plan">
   <meta name="note-date" content="May 26, 2026">
-  <meta name="note-description" content="Full audit of what Sterling has built vs. what BookMule ships, with a prioritized list of remaining work organized by unlock value.">
+  <meta name="note-description" content="Full audit of what Sterling has built vs. what BookMule ships, with a prioritized list of remaining work including Stripe wiring and plan enforcement.">
   <title>Sterling → BookMule Gap Analysis & Remaining Build Plan — session notes</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -259,15 +259,22 @@
       <div id="html-view" class="prose">
         <h2>Sterling → BookMule Gap Analysis &amp; Remaining Build Plan</h2>
 <h2>Summary</h2>
-<p>This session audited the full Sterling codebase against BookMule's feature set to identify what's wired end-to-end versus what's still missing. Import (CSV → QBO), mass-edit, mass-delete, and export are all fully wired with real Inngest background jobs and QBO API calls — significantly more complete than expected. The strategic context from Will's notes (target accountants not direct SMB; vendor canonicalization is the moat; Plaid bank feeds are V1 priority; IRS applications need to be filed now) was incorporated into the gap analysis. The plan was updated with a prioritized build list covering 17 remaining items across P0 (critical path), P1 (differentiators), P2 (feature completeness), and P3 (compliance/production).</p>
+<p>This session audited the full Sterling codebase against BookMule's feature set to identify what's wired end-to-end versus what's still missing. Import (CSV → QBO), mass-edit, mass-delete, and export are all fully wired with real Inngest background jobs and QBO API calls — significantly more complete than expected. The strategic context from Will's notes (target accountants not direct SMB; vendor canonicalization is the moat; Plaid bank feeds are V1 priority; IRS applications need to be filed now) was incorporated into the gap analysis. A second pass added Stripe real-credential wiring and all three plan enforcement gates (row quotas, entity count, seats) — currently none of the limits are enforced even though the <code>PlanTier</code> enum exists on <code>Workspace</code>.</p>
 <h2>Key Topics</h2>
-<ul><li>Full codebase audit: pages, API routes, Inngest functions, Prisma models</li><li>BookMule feature set: 8 core capabilities including safe merge, invoice templates, AP/Bill Pay, 1099 Center</li><li>Will's strategic notes: accountant ICP, per-vendor pricing, vendor canonicalization engine as moat, Plaid as V1 must-have</li><li>QBO token refresh gap — blocks all operations after ~1 hour of inactivity</li><li>1099 filing flow: W-9 chase emails, TIN validation, 1099-NEC PDF generation, IRS FIRE export</li><li>Vendor canonicalization: fuzzy match + embeddings + LLM reasoning to unify "Joe's Plumbing LLC" / "JOSEPHS PLUM ACH" / "Joe Smith Plumbing"</li></ul>
+<ul><li>Full codebase audit: pages, API routes, Inngest functions, Prisma models</li><li>BookMule feature set: 8 core capabilities including safe merge, invoice templates, AP/Bill Pay, 1099 Center</li><li>Will's strategic notes: accountant ICP, per-vendor pricing, vendor canonicalization as moat, Plaid as V1 must-have</li><li>QBO token refresh gap — blocks all operations after ~1 hour of inactivity</li><li>Stripe: checkout/portal/webhook are wired but price IDs are placeholders — real credentials still needed</li><li>Plan enforcement: row quotas, entity count limits, and seat limits are not enforced anywhere today</li><li>1099 filing flow: W-9 chase emails, TIN validation, 1099-NEC PDF generation, IRS FIRE export</li><li>Vendor canonicalization: fuzzy match + embeddings + LLM reasoning to unify vendor name variants across sources</li></ul>
 <h2>Decisions &amp; Insights</h2>
-<ul><li>Import, mass-edit, mass-delete, and export are production-ready — the core QBO write operations are done</li><li>Receipt scan and 1099 Center are "UI + data model only" — no real AI processing or filing wired</li><li>Safe merge (consolidate vendors/customers/accounts) is completely absent from the codebase</li><li>QBO token refresh is the single most urgent fix — every operation will fail after ~1 hour without it</li><li>"Reverts are free" is a marketing claim with no backend implementation yet</li><li>The strategic differentiation (vs Track1099, Tax1099 etc.) is vendor canonicalization + bank-feed cross-reference, not the filing itself</li><li>IRS TIN Matching e-services and FIRE/IRIS Transmitter Control Code applications need to be filed immediately (4-8 week approval lag)</li><li>Plaid integration is a V1 priority per Will — without bank feeds the product is "a glorified Track1099"</li></ul>
+<ul><li>Import, mass-edit, mass-delete, and export are production-ready — the core QBO write operations are done</li><li>Receipt scan and 1099 Center are "UI + data model only" — no real AI processing or filing wired</li><li>Safe merge (consolidate vendors/customers/accounts) is completely absent from the codebase</li><li>QBO token refresh is the single most urgent fix — every operation will fail after ~1 hour without it</li><li>"Reverts are free" is a marketing claim with no backend implementation yet</li><li>Stripe checkout/portal/webhook exist but price IDs are <code>placeholder</code> strings — nothing real transacts</li><li><code>Workspace</code> has no <code>monthlyRowsUsed</code> or <code>billingPeriodStart</code> fields — schema migration required before quota enforcement</li><li>FREE tier row limit (100/mo), entity limit (1), and seat limit (1) are unenforced today</li><li>The strategic differentiation vs Track1099/Tax1099 is vendor canonicalization + bank-feed cross-reference, not the filing itself</li><li>IRS TIN Matching e-services and FIRE/IRIS TCC applications need to be filed immediately (4-8 week approval lag)</li></ul>
 <h2>Action Items</h2>
-<ul><li><input type="checkbox" disabled> <strong>P0:</strong> Add QBO token refresh logic (<code>src/lib/providers/qbo.ts</code>) — call Intuit token refresh endpoint when <code>tokenExpiresAt</code> is past</li><li><input type="checkbox" disabled> <strong>P0:</strong> Wire receipt scan OCR — call Claude vision API in <code>src/inngest/functions/scan-receipt.ts</code> (infrastructure exists)</li><li><input type="checkbox" disabled> <strong>P0:</strong> Implement revert operations — <code>src/app/api/operations/[id]/revert/route.ts</code> + <code>src/inngest/functions/revert-operation.ts</code></li><li><input type="checkbox" disabled> <strong>P0:</strong> Build safe merge — <code>src/app/(dashboard)/dashboard/merge/page.tsx</code> + Inngest function (not in codebase at all)</li><li><input type="checkbox" disabled> <strong>P1:</strong> Vendor canonicalization engine — <code>src/lib/vendor-canonicalization.ts</code> (fuzzy + embeddings + LLM + confidence scoring)</li><li><input type="checkbox" disabled> <strong>P1:</strong> 1099 W-9 chase emails + magic-link intake form + 1099-NEC PDF generation + IRS FIRE export</li><li><input type="checkbox" disabled> <strong>P1:</strong> Accountant multi-client dashboard — <code>src/app/(dashboard)/dashboard/clients/page.tsx</code> + new <code>Client</code> Prisma model</li><li><input type="checkbox" disabled> <strong>P1:</strong> Plaid bank feed integration — <code>src/lib/plaid.ts</code> + nightly sync Inngest function</li><li><input type="checkbox" disabled> <strong>P2:</strong> Prior-year 1099 + W-9 upload (eliminates re-chasing known vendors)</li><li><input type="checkbox" disabled> <strong>P2:</strong> Export XLSX + email/scheduled delivery</li><li><input type="checkbox" disabled> <strong>P2:</strong> Free tier row quota enforcement in submit routes</li><li><input type="checkbox" disabled> <strong>P3:</strong> File IRS TIN Matching e-services application (non-code — do this week)</li><li><input type="checkbox" disabled> <strong>P3:</strong> File IRS FIRE Transmitter Control Code + IRIS registration (non-code — do this week)</li><li><input type="checkbox" disabled> <strong>P3:</strong> Member invite flow (Clerk org invitations)</li></ul>
+<h3>P0 — Critical path</h3>
+<ul><li><input type="checkbox" disabled> <strong>QBO token refresh</strong> — <code>src/lib/providers/qbo.ts</code>: call Intuit refresh endpoint when <code>tokenExpiresAt</code> is past; store new tokens on <code>Entity</code></li><li><input type="checkbox" disabled> <strong>Stripe real credentials</strong> — create Starter ($25/mo) and Multi-entity ($79/mo) products in Stripe dashboard; swap placeholder price IDs in env; test checkout → webhook → <code>workspace.plan</code> update end-to-end</li><li><input type="checkbox" disabled> <strong>Schema migration</strong> — add <code>monthlyRowsUsed Int @default(0)</code> and <code>billingPeriodStart DateTime @default(now())</code> to <code>Workspace</code></li><li><input type="checkbox" disabled> <strong>Row quota enforcement</strong> — <code>checkRowQuota</code> helper in <code>src/lib/pricing.ts</code>; call before firing Inngest in each submit route; return 402 + <code>upgradeRequired: true</code> when FREE hits 100 rows/mo</li><li><input type="checkbox" disabled> <strong>Entity count enforcement</strong> — in QBO callback/provision route, check entity count vs plan limit before completing connect; redirect to upgrade page if at limit</li><li><input type="checkbox" disabled> <strong>Wire receipt scan OCR</strong> — call Claude vision API in <code>src/inngest/functions/scan-receipt.ts</code> (upload + Inngest skeleton already exist)</li><li><input type="checkbox" disabled> <strong>Revert operations</strong> — <code>src/app/api/operations/[id]/revert/route.ts</code> + <code>src/inngest/functions/revert-operation.ts</code></li></ul>
+<h3>P1 — Core differentiators</h3>
+<ul><li><input type="checkbox" disabled> <strong>Vendor canonicalization engine</strong> — <code>src/lib/vendor-canonicalization.ts</code>: fuzzy + embeddings + LLM + confidence scoring; <code>VendorAlias</code> model on <code>Entity</code></li><li><input type="checkbox" disabled> <strong>1099 W-9 chase emails</strong> — <code>src/app/api/1099/chase-w9/route.ts</code> via Resend; magic-link intake form at <code>src/app/(public)/w9/[token]/page.tsx</code></li><li><input type="checkbox" disabled> <strong>1099-NEC PDF generation + IRS FIRE export</strong> — <code>pdf-lib</code> for per-vendor PDFs; IRS Publication 1220 flat file for manual FIRE upload</li><li><input type="checkbox" disabled> <strong>Plaid bank feed integration</strong> — <code>src/lib/plaid.ts</code> + nightly sync Inngest function; required for canonicalization cross-reference</li><li><input type="checkbox" disabled> <strong>Accountant multi-client dashboard</strong> — <code>src/app/(dashboard)/dashboard/clients/page.tsx</code> + new <code>Client</code> Prisma model</li><li><input type="checkbox" disabled> <strong>Seat enforcement</strong> — gate member invites by plan limit once invite flow is built</li><li><input type="checkbox" disabled> <strong>Upgrade CTA component</strong> — shared <code>&lt;UpgradePrompt reason="..." /&gt;</code> shown inline when any gate returns 402</li></ul>
+<h3>P2 — Feature completeness</h3>
+<ul><li><input type="checkbox" disabled> <strong>Safe merge</strong> — <code>src/app/(dashboard)/dashboard/merge/page.tsx</code> + <code>src/inngest/functions/merge-qbo.ts</code> (zero files today)</li><li><input type="checkbox" disabled> <strong>Prior-year 1099 + W-9 upload</strong> — eliminates re-chasing known vendors</li><li><input type="checkbox" disabled> <strong>Export XLSX + email/scheduled delivery</strong> — add <code>xlsx</code> package; Resend for email delivery; Inngest cron for scheduled exports</li><li><input type="checkbox" disabled> <strong>Free tier row quota enforcement</strong> in all submit routes (depends on schema migration above)</li><li><input type="checkbox" disabled> <strong>Member invite flow</strong> — <code>src/app/api/workspace/invite/route.ts</code> via Clerk org invitations</li></ul>
+<h3>P3 — Compliance (non-code, do now)</h3>
+<ul><li><input type="checkbox" disabled> <strong>File IRS TIN Matching e-services application</strong> — irs.gov, 4-8 week lag; without it V1 does format-only TIN validation</li><li><input type="checkbox" disabled> <strong>File IRS FIRE Transmitter Control Code + IRIS registration</strong> — fire.irs.gov; required for electronic 1099 upload; IRIS mandatory by Dec 31, 2026</li></ul>
 <h2>Code Snippets</h2>
-<h3>QBO Token Refresh — helper to add to src/lib/providers/qbo.ts</h3>
+<h3>QBO Token Refresh — src/lib/providers/qbo.ts</h3>
 <pre><code class="language-typescript">export async function ensureFreshToken(entity: Entity): Promise&lt;Entity&gt; {
   if (entity.tokenExpiresAt &amp;&amp; entity.tokenExpiresAt &gt; new Date()) return entity;
   const res = await fetch('https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer', {
@@ -288,27 +295,55 @@
     },
   });
 }</code></pre>
-<h3>Current State — what's wired vs stub</h3>
+<h3>Row Quota Enforcement — src/lib/pricing.ts</h3>
+<pre><code class="language-typescript">const ROW_LIMITS: Record&lt;string, number | null&gt; = {
+  FREE: 100,
+  STARTER: null,
+  MULTI_ENTITY: null,
+};
+
+export async function checkRowQuota(workspace: Workspace, rowCount: number) {
+  const limit = ROW_LIMITS[workspace.plan];
+  if (limit === null) return;
+  const periodAge = Date.now() - workspace.billingPeriodStart.getTime();
+  if (periodAge &gt; 30 * 24 * 60 * 60 * 1000) {
+    await db.workspace.update({ where: { id: workspace.id }, data: { monthlyRowsUsed: 0, billingPeriodStart: new Date() } });
+    return;
+  }
+  if (workspace.monthlyRowsUsed + rowCount &gt; limit) {
+    throw new QuotaError(`Plan limit: ${workspace.monthlyRowsUsed}/${limit} rows used this month`);
+  }
+}</code></pre>
+<h3>Entity Count Enforcement — QBO callback route</h3>
+<pre><code class="language-typescript">const ENTITY_LIMITS: Record&lt;string, number&gt; = { FREE: 1, STARTER: 1, MULTI_ENTITY: 5 };
+const entityCount = await db.entity.count({ where: { workspaceId: workspace.id } });
+if (entityCount &gt;= ENTITY_LIMITS[workspace.plan]) {
+  return redirect(`/dashboard/add-ons/entities/upgrade?reason=entity_limit`);
+}</code></pre>
+<h3>Current Build State</h3>
 <pre><code>WIRED END-TO-END:
   Import CSV → QBO     ✅  AI column mapping, Inngest, rerun support
   Mass-edit            ✅  Account ID resolution, Line array updates, QBO API
   Mass-delete          ✅  Void/hard, pre-delete snapshot, Inngest
   Export CSV           ✅  QBO query → filter → flatten → CSV download
   QBO OAuth            ✅  Connect, callback, token storage
-  Stripe billing       ✅  Checkout, portal, webhook
+  Stripe billing       ⚠️  Code exists, price IDs are placeholders — not transacting
   History + audit log  ✅  All ops, filter, detail, rerun button
 
 UI + MODELS ONLY (no real processing):
   Receipt scan         ⚠️  Page + stubs, no OCR call
   1099 Center          ⚠️  TaxJob model + UI, no W-9 chase or filing
 
+UNENFORCED:
+  Row quotas           ❌  FREE = 100/mo — not checked anywhere
+  Entity limits        ❌  FREE/STARTER = 1 entity — not checked on connect
+  Seat limits          ❌  Invite flow not built yet
+
 NOT IN CODEBASE:
   Safe merge           ❌  Zero files
-  Invoice templates    ❌  Zero files
-  AP/Bill Pay          ❌  Zero files
-  Token refresh        ❌  Missing — blocks everything after 1 hour
-  Revert operations    ❌  "Reverts are free" claim has no backend
-  Plaid bank feeds     ❌  Required for vendor canonicalization to be meaningful</code></pre>
+  Token refresh        ❌  Silent failure after ~1 hour
+  Revert operations    ❌  "Reverts are free" has no backend
+  Plaid bank feeds     ❌  Required for vendor canonicalization</code></pre>
       </div>
       <div id="claude-context" style="display:none">I'm picking up from a previous Claude Code session.
 
@@ -317,32 +352,32 @@ NOT IN CODEBASE:
 **Date:** 2026-05-26
 
 ### What we worked on
-This session started as a continuation from a prior context (QBO Bill import fixes + rerun button) and pivoted into a full product gap analysis. The user wanted to understand what's left to build to reach BookMule feature parity, informed by both the current codebase and Will's strategic notes (`notes/will-thoughts-052326.md`). We fetched BookMule's marketing site to enumerate their 8 core capabilities, did a full codebase audit (pages, APIs, Inngest functions, Prisma models), read the actual Inngest function files to confirm what's genuinely wired vs stub, and then cross-referenced against Will's strategic notes about the accountant ICP and vendor canonicalization moat. The gap analysis was written into the plan file at `/Users/chasestephens/.claude/plans/resilient-orbiting-scroll.md`.
+This session covered two arcs. First: a full product gap analysis comparing Sterling's codebase against BookMule's feature set, incorporating Will's strategic notes about targeting accountants over direct SMB and the vendor canonicalization engine being the product moat. Second: a focused pass on Stripe wiring and plan enforcement — identifying that while the Stripe checkout/portal/webhook routes exist, they use placeholder price IDs and none of the plan limits (rows, entities, seats) are actually enforced in the API routes. Both sets of findings were written into the plan file at `/Users/chasestephens/.claude/plans/resilient-orbiting-scroll.md`.
 
 ### Key decisions and why
-- **Token refresh is P0**: Every QBO operation will fail after ~1 hour without it. It's a silent failure mode that would block real usage.
-- **Revert operations are P0**: The product's marketing says "reverts are free" and the history UI shows this promise — but no backend exists. This is a trust-breaking gap.
-- **Vendor canonicalization is the moat** (per Will): The differentiation vs filing-only tools (Track1099, Tax1099) is resolving "Joe's Plumbing LLC" = "JOSEPHS PLUM ACH" = "Joe Smith Plumbing" across QBO + bank feeds. Without this, the product has no durable advantage.
-- **Plaid is V1 not V2** (per Will): Bank feeds are required for the canonicalization engine to cross-reference. Without bank data, the product can't do the cleanup work that justifies the pricing premium.
-- **IRS applications need to be filed this week** (per Will): TIN Matching e-services and FIRE/IRIS TCC both have 4-8 week approval lags. Filing late means V1 ships with format-only validation and B-Notices land on clients.
+- **Token refresh is P0**: Every QBO operation silently fails after ~1 hour. It's a one-file fix with maximum leverage.
+- **Stripe + enforcement are P0 together**: There's no point enforcing limits until the upgrade flow actually transacts. They need to ship as a unit — real price IDs → test checkout → webhook updates plan → enforcement gates kick in.
+- **Schema migration before enforcement**: `monthlyRowsUsed` and `billingPeriodStart` don't exist on `Workspace` yet. Enforcement code can't be written until the migration runs.
+- **Vendor canonicalization is the moat** (per Will): The differentiation vs filing-only tools is resolving name variants across QBO + bank feeds. Plaid is a prerequisite, not an add-on.
+- **IRS applications need to be filed this week** (per Will): TIN Matching and FIRE/IRIS TCC have 4-8 week approval lags. Format-only TIN validation is the V1 fallback while waiting.
 
 ### What was explored but not pursued
-- **SFTP/Zapier/Slack integrations**: Settings page shows them as LIVE but they're not wired. Deferred — not on BookMule's core feature list and not blocking accountant V1.
-- **AP/Bill Pay**: BookMule lists this as a feature but it's substantial (approval workflows, ACH/check/card payment initiation, PO-bill matching). Marked P2 — likely V2 given complexity.
-- **Invoice templates**: BookMule has these, but not in Will's V1 priorities for the accountant ICP. Deferred to P2.
+- **SFTP/Zapier/Slack integrations**: Settings page shows them as connected but they're not wired. Deferred — not blocking accountant V1.
+- **AP/Bill Pay**: Substantial build (approval workflows, payment initiation, PO-bill matching). Marked P2/V2.
+- **Invoice templates**: Not in Will's V1 accountant priorities. Deferred to P2.
 
 ### Current state
-The codebase is more complete than expected on the core QBO write operations — import, edit, delete, and export are all genuinely wired with real Inngest functions and QBO API calls. The gaps are: (1) token refresh (silent failure after 1 hour), (2) receipt scan OCR (infrastructure exists, just needs the Claude vision call), (3) revert operations (UI promise with no backend), (4) safe merge (completely absent), and (5) the full 1099 filing flow beyond creating TaxJob records. The strategic gap is the vendor canonicalization engine and Plaid integration that differentiate the product from filing-only tools.
+Core QBO write operations (import, edit, delete, export) are genuinely production-ready. The three big gaps for going live are: (1) QBO token refresh — silent failure after ~1 hour, (2) Stripe real credentials + enforcement gates — no limits are enforced today, and (3) the 1099 filing flow beyond TaxJob record creation. The vendor canonicalization engine and Plaid integration are the V1 differentiators that still need to be built from scratch.
 
 ### Good places to pick up
-- Start with QBO token refresh — it's a one-file fix with high leverage (unblocks all production usage)
-- Then receipt scan OCR — the upload API and Inngest skeleton exist, just needs the Claude vision API call wired in
-- File IRS applications in parallel (non-code) — TIN Matching e-services + FIRE TCC this week
-- Then plan the vendor canonicalization engine spec — this is the hardest piece and should be planned before building</div>
+- QBO token refresh first — one helper function in `src/lib/providers/qbo.ts`, then thread it through all three Inngest functions
+- Then Stripe: create products in dashboard → swap price IDs in env → run `stripe listen` locally → test the checkout → webhook → plan update loop
+- Then schema migration + `checkRowQuota` helper + wire into the four submit routes
+- File IRS applications in parallel (non-code) — TIN Matching e-services + FIRE TCC this week</div>
     </main>
 
     <footer class="note-footer">
-      <span>Generated Tue, 26 May 2026 19:51:18 GMT</span>
+      <span>Generated Tue, 26 May 2026 20:00:14 GMT</span>
       <span><a href="https://notes.thethoughtdungeon.com">notes.thethoughtdungeon.com</a></span>
     </footer>
   </div>
